@@ -1,4 +1,7 @@
 import random
+
+
+
 number = random.randint(1, 3)
 userInput = int(input("rock = 1, paper = 2, scissors = 3: "))
 
