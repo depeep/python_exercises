@@ -1,0 +1,104 @@
+# # 5.1 a
+# list = []
+
+# # 5.1 b
+# list = [1,32,2]
+
+# # 5.2 
+# # a. 6
+# # b. 0
+# # c. 5
+# # d. 12
+# # e. 10
+
+# # check:
+# my_list = [30, 1, 12, 14, 10, 0]
+# print (my_list[2])
+# print (my_list[-2])
+
+# 5.3
+# a. [5,1,2,1,0,40]
+# b. [5,43,1,2,1,0] 
+# c. [5,1,2,1,0,1,43] let op 1 en 43 toegevoegd
+# d. [5,2,1,0]
+# e. [0,1,1,2,5]
+# f. [,0,1,2,1,5]
+# g. [2,1,1,0,5] of iets dergelijks, want shuffle() geeft een willekeurige volgorde terug.
+
+
+# check:
+# import random
+# my_list = [5,1,2,1,0]
+# my_list.append(40)
+# my_list.insert(1,43)
+# my_list.extend([1, 43])
+# my_list.remove(1)
+# my_list.sort()
+# my_list.reverse()
+# random.shuffle(my_list)
+# print (my_list)
+
+# 5.4
+# a. 4
+# b. 5
+# c. 5  xxxxx list.count(5) telt het aantal keer dat 5 voorkomt in de lijst, niet de lengte van de lijst
+# d. 11
+# e. 3
+# f. 31
+
+
+# # 5.5
+# a. [5,1,2,1,0,1,3,6]
+# b. [5,1,2,1,0,5,1,2,1,0]
+# c. [5,1,2,1,0,5,1,2,1,0]
+# d  [ 1,2,1,0]
+# e. 1
+
+# 5.6  vaag antwoordmodel moest dit niet in 1 statement?
+
+# Exercise 5.6 Write statements to do the following (in the ‘smart’ way):
+
+# a. Create a list with 20 values of 2.5.
+
+# b. Assign the value 5.5 to the last element in the list.
+
+# c. Display the sum of the first two elements.
+
+# d. Compute the sum of the first five elements in the list.
+
+# e. Find the minimum element in the list.
+
+# f. Randomly generate an index and display the element of this index in the list.
+
+# a. my_list = [2.5]*20
+# b. my_list[-1]=5.5
+# c. print (sum(my_list[0:2]))
+# d. list_sum = (sum(my_list[0:5]) 
+# e. list_min = min(my_list)
+# f. print list[random.randint(0,len(my_list))]
+
+# 5.7 
+# geeft een foutmelding, want er zijn maar 3 elementen in de lijst, dus index 25 is out of range.
+# # probeercode:
+# list = [2.5]*3
+# print (list)
+# print (list[25])
+
+# # 5.8
+# for i in range(6):
+#     print ("I love to program")
+
+# # 5.9
+# n = 0
+# user_input = input("how many push-up do you want me to do? ")
+# nr_reps = int(user_input)
+# for i in range(nr_reps):
+#     print('push up!')
+
+# 5.10 bekend
+
+5.11
+# a. alle woorden onder elkaar
+# b. de lengte van ieder woord * 2 onder elkaar
+# c. milk yummy enz.
+# d  de lijst achterstevoren onder elkaar
