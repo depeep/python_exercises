@@ -167,14 +167,14 @@ def schemaTranslate(gametenVader,gametenMoeder):
     for gameet in gametenVader:
         print ("       ",gameet.ljust(6), " |", end='')
     print()
-    print ("-" * 72 +"|")
+    print ("-" * 72 )
     for i in range (4):
         print (gametenMoeder[i], " |",end='')
         for j in range (4):
             fenotype=translateFenotype(kruisingsschema[i][j])
             print (fenotype.rjust(15), "|", end='')
         print()
-        print ("-" * 72 + "|")
+        print ("-" * 72 )
 
 
 def main():
