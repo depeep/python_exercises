@@ -1,0 +1,149 @@
+# dit programma voert dihybride kruisingen uit
+import sys
+# globals
+
+
+# invoerfunctie
+
+    # dominantA = input ("geef het fenotype dat bij de dominante eigenschap A hoort")
+    # recessiefA = input ("geef het fenotype dat bij de recessieve eigenschap a hoort")
+    # dominantB = input ("geef het fenotype dat bij de dominante eigenschap B hoort")
+    # recessiefB = input ("geef het fenotype dat bij de recessieve eigenschap b hoort")
+
+    #  invoer genotypen ouders
+
+def invoerVader():
+    genoVader = "xxxx"
+    while genoVader.lower()  != "aabb":
+        genoVader = input ("geef het genotype van vader: ")
+        if genoVader.lower()  != "aabb":
+            print ("probeer het nog een keer, in de vorm AaBb")
+    return (genoVader)
+
+def invoerMoeder():
+    genoMoeder = "xxxx"            
+
+    while genoMoeder.lower()  != "aabb":
+        genoMoeder = input ("geef het genotype van moeder: ")
+        if genoMoeder.lower()  != "aabb":
+            print ("probeer het nog een keer, in de vorm AaBb")
+    return (genoMoeder)
+
+
+# menu
+def menu(genoVader, genoMoeder):
+    print()
+    print ("MENU:")
+    print ('"g" voor gameten van de ouders' )
+    print ('"k" voor het kruisingsschema' )
+    print ('"n" voor invoeren nieuwe kruising' )
+    print ('"x" om te stoppen')
+    menuInput = input ('voer je keuze in, gevolgd door ENTER: ')
+    if  menuInput == "g":
+        gametenPrinten(genoVader, genoMoeder)
+    elif menuInput == "k":
+        kruisingsschemaPrinten(genoVader, genoMoeder)
+    elif menuInput == "n":
+        print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+        print ("Nieuwe kruising")
+        print ()
+        genoVader = invoerVader()
+        genoMoeder = invoerMoeder()
+        menu(genoVader, genoMoeder)
+    elif menuInput == "x":
+        bye()
+    else:
+        menu(genoVader, genoMoeder)
+
+    
+# functie om gametenlijst te maken van een ouder
+def maakGametenLijst(genotype):
+    gametenLijst = []
+    for i in range (0,2):
+        for k in range (2,4):
+            gameet = genotype[i]+genotype[k]
+            # print (gameet)
+            gametenLijst.append(gameet) 
+    return gametenLijst
+
+# kruisen, vullen van de list of lists
+def vulKruisingsschema (gametenVader, gametenMoeder):
+    kruisingsschema =[]  
+    for v in range (4):
+        rij =[]
+        for m in range(4):
+            gametenPa = gametenVader[v]
+            gametenMa= gametenMoeder[m]
+            # volgorde grote en kleine letters goedzetten
+            if (gametenPa[0] == 'a') and (gametenMa[0] =='A'):
+                paar1 = gametenMa[0]+gametenPa[0]
+            else:
+                paar1 = gametenPa[0] + gametenMa[0]
+            if (gametenPa[1] == 'b') and (gametenMa[1] =='B'):
+                paar2 = gametenMa[1]+gametenPa[1]
+            else:
+                paar2 = gametenPa[1] + gametenMa[1]          
+            genoKind = paar1 + paar2
+            rij.append(genoKind)
+            # print (rij[m])
+        kruisingsschema.append(rij)
+        # print (kruisingsschema)
+    return (kruisingsschema)
+
+def printSchema(schema, gametenVader, gametenMoeder):
+    print ("   ", "|", end='')
+    for gameet in gametenVader:
+        print (" ",gameet, " |", end='')
+    print()
+    print ("-" * 33)
+    for i in range (4):
+        print (gametenMoeder[i], " |",end='')
+        for j in range (4):
+            print (schema[i][j], " |", end='')
+        print()
+        print ("-" * 33)
+
+# def gametenLijstenOuders():
+#     gametenVader = maakGametenLijst(genoVader)
+#     gametenMoeder = maakGametenLijst(genoMoeder)
+
+def kruisingsschemaPrinten(genoVader, genoMoeder):
+    print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+    print ("Kruisingsschema bij de kruising", genoVader, " x ", genoMoeder)
+    print ()
+    gametenVader = maakGametenLijst(genoVader)
+    gametenMoeder = maakGametenLijst(genoMoeder)
+    kruisingsschema = vulKruisingsschema(gametenVader,gametenMoeder)
+    printSchema (kruisingsschema,gametenVader,gametenMoeder)
+    print()
+    return
+
+def gametenPrinten(genoVader,genoMoeder):
+    print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+    print ("Gameten van de ouders bij de kruising", genoVader, " x ", genoMoeder)
+    print ()
+    gametenVader = maakGametenLijst(genoVader)
+    gametenMoeder = maakGametenLijst(genoMoeder)
+    print ('gameten van vader:  ',gametenVader)
+    print ('gameten van moeder: ',gametenMoeder)
+    return
+
+def bye():
+    print ("bye!")
+    sys.exit()
+
+           
+
+def main():
+    print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+    print ("welkom bij de antwoordgenerator voor dihybride kruisingen")
+    print()
+    genoVader = "xxxx"
+    genoMoeder = "xxxx"
+    genoVader = invoerVader()
+    genoMoeder = invoerMoeder()
+    while True:
+        menu(genoVader, genoMoeder)
+
+
+main()
