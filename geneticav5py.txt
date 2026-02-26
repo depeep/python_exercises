@@ -40,7 +40,7 @@ def menu(genoVader, genoMoeder):
     print ('"g" voor gameten van de ouders' )
     print ('"k" voor het kruisingsschema' )
     print ('"n" voor invoeren nieuwe kruising' )
-    print ('"f" voor fenotype (nog placeholders)' )
+    print ('"f" voor fenotypen van de nakomelingen' )
     print ('"x" om te stoppen')
     menuInput = input ('voer je keuze in, gevolgd door ENTER: ')
     if  menuInput == "g":
