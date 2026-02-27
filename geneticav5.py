@@ -1,9 +1,11 @@
 # dit programma voert dihybride kruisingen uit
 import sys
 # globals
+# aantekening n.a.v. zoeken met Aziz 20260227
+#  als je een global wil vernaderen in een functie 
+# moet je  "global variabeleNaam" in de functie opnemen
 
-
-# invoerfunctie
+# invoer
 
 print("\033c", end="") # ansi escapecodes om venster leeg te trappen
 print ("welkom bij de antwoordgenerator voor dihybride kruisingen")
@@ -13,7 +15,7 @@ recessiefA = input ("geef het fenotype dat bij de recessieve eigenschap a hoort:
 dominantB = input ("geef het fenotype dat bij de dominante eigenschap B hoort: ")
 recessiefB = input ("geef het fenotype dat bij de recessieve eigenschap b hoort: ")
 
-    #  invoer genotypen ouders
+#  invoer genotypen ouders
 
 def invoerVader():
     genoVader = "xxxx"
