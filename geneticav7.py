@@ -142,7 +142,7 @@ def gametenPrinten(genoVader,genoMoeder):
 def bye():
     print ("Bedankt voor het gebruik van dit programma")
     print ("Veel succes met het nog meer leren over genetica")
-    # sys.exit()
+    sys.exit()
 
 # genotype vertalen naar fenotype
 def translateFenotype(genotype, dominantA,  recessiefA, dominantB, recessiefB):
