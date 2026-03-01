@@ -63,7 +63,7 @@ def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
     elif menuInput == "f": 
         schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
     elif menuInput == "o":
-        return main()
+        main() 
     elif menuInput == "s":
         return "stop"
     else:
@@ -184,8 +184,10 @@ def main():
     dominantA, recessiefA, dominantB, recessiefB =invoerFenotypen()
     genoVader = invoerVader()
     genoMoeder = invoerMoeder()
-    while (keuze !="stop"):
+    while True:
         keuze = menu(genoVader, genoMoeder, dominantA, recessiefA, dominantB, recessiefB)
+        if keuze == "stop":
+            break 
     bye()
 
 if __name__ == "__main__":
