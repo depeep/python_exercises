@@ -63,10 +63,9 @@ def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
     elif menuInput == "f": 
         schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
     elif menuInput == "o":
-        main()
+        return "restart"
     elif menuInput == "x":
-        bye()
-        return "x"
+        return "stop"
     else:
         menu(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
 
@@ -117,7 +116,6 @@ def printSchema(schema, gametenVader, gametenMoeder):
         print()
         print ("-" * 33)
 
-
 def kruisingsschemaPrinten(genoVader, genoMoeder):
     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
     print ("Kruisingsschema bij de kruising", genoVader, " x ", genoMoeder)
@@ -127,7 +125,6 @@ def kruisingsschemaPrinten(genoVader, genoMoeder):
     kruisingsschema = vulKruisingsschema(gametenVader,gametenMoeder)
     printSchema (kruisingsschema,gametenVader,gametenMoeder)
     print()
-    return
 
 def gametenPrinten(genoVader,genoMoeder):
     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
@@ -137,12 +134,12 @@ def gametenPrinten(genoVader,genoMoeder):
     gametenMoeder = maakGametenLijst(genoMoeder)
     print ('gameten van vader:  ',gametenVader)
     print ('gameten van moeder: ',gametenMoeder)
-    return
+
 
 def bye():
     print ("Bedankt voor het gebruik van dit programma")
     print ("Veel succes met het nog meer leren over genetica")
-    sys.exit()
+   
 
 # genotype vertalen naar fenotype
 def translateFenotype(genotype, dominantA,  recessiefA, dominantB, recessiefB):
@@ -180,15 +177,20 @@ def schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recess
         print()
         print ("-" * 72 )
 
-
 def main():
     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
     welkom() 
     dominantA, recessiefA, dominantB, recessiefB =invoerFenotypen()
     genoVader = invoerVader()
     genoMoeder = invoerMoeder()
-    while menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB)!= "x":
-        menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB)
+    while True:
+        keuze = menu(genoVader, genoMoeder, dominantA, recessiefA, dominantB, recessiefB)
+        if keuze == "restart":
+            main()
+            # return main()  # return beeindigt kennelijk de huidige functie en start dan main() opnieuw ipv main() aan te roepen bovenop de huidige functie Ik vraag me af of dat wel hout snijdt
+        if keuze == "stop":
+            break  
+    bye()
 
 if __name__ == "__main__":
     main()
