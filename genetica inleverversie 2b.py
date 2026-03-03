@@ -1,5 +1,12 @@
 # dit programma voert dihybride kruisingen uit
 import sys
+# globale variabelen declareren
+dominantA = None
+recessiefA = None
+dominantB = None
+recessiefB = None
+genoVader = None
+genoMoeder = None
 
 # Welkomsboodschap
 def welkom():
@@ -20,17 +27,18 @@ def welkom():
 def invoerFenotypen():
     print ('Voer eerst de fenotypen in die horen bij de verschillende allelen')
     print()
+    global dominantA,recessiefA,dominantB,recessiefB
     dominantA = input ("geef het fenotype dat bij het dominante allel A hoort: ")
     recessiefA = input ("geef het fenotype dat bij het recessieve allel a hoort: ")
     dominantB = input ("geef het fenotype dat bij het dominante allel B hoort: ")
     recessiefB = input ("geef het fenotype dat bij allel recessieve allel b hoort: ")
     print()
-    return dominantA,recessiefA,dominantB,recessiefB
+    return (dominantA,recessiefA,dominantB,recessiefB)
 
 
 #  invoer genotypen ouders
 def invoerVader():
-    genoVader = None
+    global genoVader
     while genoVader == None or genoVader.lower() != "aabb":
         genoVader = input ("geef het genotype van vader: ")
         if genoVader.lower()  != "aabb":
@@ -38,7 +46,7 @@ def invoerVader():
     return (genoVader)
 
 def invoerMoeder():
-    genoMoeder = None          
+    global genoMoeder         
     while genoMoeder == None or genoMoeder.lower()  != "aabb":
         genoMoeder = input ("geef het genotype van moeder: ")
         if genoMoeder.lower()  != "aabb":
@@ -47,7 +55,7 @@ def invoerMoeder():
 
 
 # menu
-def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
+def menu():
     print()
     print ("MENU:")
     print ('"g" om de allelen binnen de gameten van beide ouders te laten zien')
@@ -57,17 +65,17 @@ def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
     print ('"s" om te stoppen')
     menuInput = input ('voer je keuze in, gevolgd door ENTER: ')
     if  menuInput == "g":
-        gametenPrinten(genoVader, genoMoeder)
+        gametenPrinten()
     elif menuInput == "k":
-        kruisingsschemaPrinten(genoVader, genoMoeder)
+        kruisingsschemaPrinten()
     elif menuInput == "f": 
-        schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
+        schemaTranslate()
     elif menuInput == "o":
         main() 
     elif menuInput == "s":
         return "stop"
     else:
-        menu(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
+        return menu()
 
 # functie om gametenlijst te maken van een ouder
 def maakGametenLijst(genotype):
@@ -116,17 +124,19 @@ def printSchema(schema, gametenVader, gametenMoeder):
         print()
         print ("-" * 33)
 
-def kruisingsschemaPrinten(genoVader, genoMoeder):
+def kruisingsschemaPrinten():
     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
     print ("Kruisingsschema bij de kruising", genoVader, " x ", genoMoeder)
     print ()
+    # global genoVader, genoMoeder
     gametenVader = maakGametenLijst(genoVader)
     gametenMoeder = maakGametenLijst(genoMoeder)
     kruisingsschema = vulKruisingsschema(gametenVader,gametenMoeder)
     printSchema (kruisingsschema,gametenVader,gametenMoeder)
     print()
 
-def gametenPrinten(genoVader,genoMoeder):
+def gametenPrinten():
+    # global genoVader, genoMoeder
     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
     print ("Gameten van de ouders bij de kruising", genoVader, " x ", genoMoeder)
     print ()
@@ -142,7 +152,8 @@ def bye():
    
 
 # genotype vertalen naar fenotype
-def translateFenotype(genotype, dominantA,  recessiefA, dominantB, recessiefB):
+def translateFenotype(genotype):
+    # global dominantA,  recessiefA, dominantB, recessiefB
     if genotype == "aabb":
         feno = recessiefA + "-" + recessiefB
         return feno
@@ -157,7 +168,7 @@ def translateFenotype(genotype, dominantA,  recessiefA, dominantB, recessiefB):
         return feno
 
 # kruisingsschema vullen, ieder genotype naar de vertaler sturen, de placeholders voor fenotype printen in het schema
-def schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB):
+def schemaTranslate():
     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
     print ("fenotype printen")
     print()
@@ -172,7 +183,7 @@ def schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recess
     for i in range (4):
         print (gametenMoeder[i], " |",end='')
         for j in range (4):
-            fenotype=translateFenotype(kruisingsschema[i][j],dominantA,recessiefA,dominantB,recessiefB)
+            fenotype=translateFenotype(kruisingsschema[i][j])
             print (fenotype.rjust(15), "|", end='')
         print()
         print ("-" * 72 )
@@ -180,14 +191,17 @@ def schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recess
 def main():
     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
     welkom() 
+    # global genoVader, genoMoeder, dominantA,  recessiefA, dominantB, recessiefB
     keuze = None
-    dominantA, recessiefA, dominantB, recessiefB =invoerFenotypen()
-    genoVader = invoerVader()
-    genoMoeder = invoerMoeder()
-    while True:
-        keuze = menu(genoVader, genoMoeder, dominantA, recessiefA, dominantB, recessiefB)
-        if keuze == "stop":
-            break 
+    # dominantA, recessiefA, dominantB, recessiefB =invoerFenotypen()
+    # genoVader = invoerVader()
+    # genoMoeder = invoerMoeder()
+    # while True:
+    invoerFenotypen()
+    invoerVader()
+    invoerMoeder()
+    while keuze != "stop":
+        keuze = menu()
     bye()
 
 if __name__ == "__main__":
