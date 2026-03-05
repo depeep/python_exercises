@@ -8,4 +8,12 @@ def sumDigits(number):
         sum = sum + digit
     return sum
 
-print (sumDigits('12345'))
+def main():
+    invoer = None
+    while invoer != "s":
+        invoer = input ('voer een getal van meerdere cijfers in: (s om te stoppen)')
+        if invoer != "s":
+            print (sumDigits (invoer))
+
+if __name__ == "__main__":
+    main()
