@@ -10,15 +10,17 @@ def makeJamSandwich():
     print("cover jam with a slice of bread")
 
 def addFruit():  
-    fruits = [apple, banana, coconut] 
+    fruits = ['apple', 'banana', 'coconut'] 
     for fruit in (fruits):
         print("add one", fruit)
     
 def main():
+    cheeseSandwich = None
+    jamSandwich = None
     print("prepare bag lunch")
     print()
     print("make 3 cheese sandwiches")
-    for CheeseSandwich in range (3):
+    for cheeseSandwich in range (3):
         makeCheeseSandwich()
     print("make 2 jam sandwiches")
     for jamSandwich in range(2):
@@ -26,5 +28,5 @@ def main():
     print("adding fruits")
     addFruit()
 
-if __name__ == "__main()__":
+if __name__ == "__main__":
     main()
