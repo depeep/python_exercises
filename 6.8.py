@@ -18,7 +18,7 @@ def cleanUp(rawData):
         else:
             while rawData [positie +1] == None:
                 del rawData[positie]
-          
+            del rawData[positie]          
     
     return rawData
 
