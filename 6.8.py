@@ -8,23 +8,22 @@ def cleanUp(rawData):
 
                 
 
-    while None in rawData:
+    if None in rawData:
         positie = rawData.index(None)
+        getalNone = rawData[positie]
         print(positie)
-        getalVoor = rawData[positie - 1]
-        print (getalVoor)
-        getalNa = rawData[positie + 1]
-        while getalNa != None:
-            del (rawData[positie])
-            nieuwGetal = (getalVoor + getalNa)/2  #interpoleren
+        print(getalNone)
+        getalVoorNone = rawData[positie - 1]
+        print (getalVoorNone)
+        getalNaNone = rawData[positie + 1]
+        print (getalNaNone)
+        if getalNaNone != None:
+            print (rawData[positie])
+            del rawData[positie]
+            nieuwGetal = (getalVoorNone + getalNaNone)/2  #interpoleren
             rawData.insert(positie,  nieuwGetal)
-
-        # print (getalNa)
-        # if getalNa != None:  
-        #     nieuwGetal = (getalVoor + getalNa)/2  #interpoleren
-        #     rawData[positie] = nieuwGetal
-        # else:
-        #     del(getalNa) #meerder instanties van None na elkaar verwijderen
+        else:
+            del getalNone #meerder instanties van None na elkaar verwijderen
               
     
     return rawData
@@ -39,4 +38,4 @@ print()
 print (cleanUp(rawData))
 
 
-Werkt nog niet naar behoren
+# Werkt nog niet naar behoren
