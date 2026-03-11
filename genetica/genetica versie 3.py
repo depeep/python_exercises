@@ -231,7 +231,7 @@ def schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recess
 # if __name__ == "__main__":
 #     main()
 
-# FUNCTIE VOOR DE TESTRUNS >> BASIS VOOR DE NIEUWE MAIN
+# FUNCTIE VOOR DE TESTRUNS >> BASIS VOOR DE NIEUWE MAIN() EN MENU()
 
 def runme1():
     type, template = invoerKruisingstype()  # template haalt op of het de vorm aa, aabb, of aabbcc moet hebben
