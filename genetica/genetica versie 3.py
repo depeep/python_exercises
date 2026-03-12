@@ -22,7 +22,7 @@ def invoerFenotypen(kruisingstype):
     opties = ['A','a', 'B', 'b', 'C', 'c']
     print ('Voer eerst de fenotypen in die horen bij de verschillende allelen')
     print()
-    if kruisingstype == "m":
+    if kruisingstype == "m":   # misschien ook de losse functie, zie onder, gebruiken (wel aanpassen dan)
         aantAllelen = 2
     elif kruisingstype == "d":
         aantAllelen = 4
@@ -65,7 +65,7 @@ def invoerMoeder(template):
         if genoMoeder.lower()  != template:
             print ("probeer het nog een keer, in de vorm ", template)
     return (genoMoeder)
-# einde invoer genotypen ouders  TODO letters omdraaien bij aA enz, Nice to have, maar niet strikt noodzakelijk. Overlap/herhaling op te splitsen naar aparte functie  om hem DRYer te krijgen
+# einde invoer genotypen ouders  TODO  Overlap/herhaling moeder en vaderop te splitsen naar aparte functie  om hem DRYer te krijgen
 
 # NEW functie om gametenlijst te maken van een ouder
 def maakGametenLijst(kruisingstype, genotype):
@@ -90,191 +90,103 @@ def maakGametenLijst(kruisingstype, genotype):
                         gametenLijst.append(gameet) 
     return gametenLijst
 
-# NEW losgehaald functie om letters in de goede volgorde te zetten
-            # volgorde grote en kleine letters goedzetten
-def lettervolgorde():
-    if (gametenPa[0] == 'a') and (gametenMa[0] =='A'):
-        paar1 = gametenMa[0]+gametenPa[0]
+# NEW losgehaald functie om grote en kleine letter in de goede volgorde te zetten
+def verbeterVolgorde(paar):
+    if paar == "aA":
+        return "Aa"
+    elif paar =="bB":
+        return "Bb"
+    elif paar == "cC":
+        return "Cc"
     else:
-        paar1 = gametenPa[0] + gametenMa[0]
-    if (gametenPa[1] == 'b') and (gametenMa[1] =='B'):
-        paar2 = gametenMa[1]+gametenPa[1]
-    else:
-        paar2 = gametenPa[1] + gametenMa[1]          
-            
-
-# kruisen, vullen van de list of lists
+        return paar
+    
+# NEW kruisen, vullen van de list of lists
 def vulKruisingsschema (type,gametenVader, gametenMoeder):
-    if type == "m": #dimensies van het kruisingsschema goedzetten
-        dimensie = 2
-    elif type == "d":
-        dimensie = 4
-    else:
-        dimensie = 3
-   
+    dimensie, paren = dimensieBepalen(type)
     kruisingsschema =[]  
     for v in range (dimensie):
         rij =[]
         for m in range (dimensie):
             gametenPa = gametenVader[v]
             gametenMa= gametenMoeder[m]
-            genoKind =''
-            for positie in range(dimensie-1):
+            genoKind =""
+            for positie in range(paren):
                 allelPa = gametenPa[positie]
-                for i in range (dimensie):
-                    allelMa = gametenMa[i]
-                    paar = allelPa + allelMa
-                    genoKind = genoKind + paar
-                print (genoKind)
+                allelMa = gametenMa[positie]
+                paar = allelPa + allelMa
+                paar = verbeterVolgorde(paar)
+                genoKind = genoKind + paar
+                # print (genoKind)
             rij.append(genoKind)
-        print (rij)
-    #     kruisingsschema.append(rij)
-    #     # print (kruisingsschema)
-    # return (kruisingsschema)
+        # print (rij)
+        kruisingsschema.append(rij)
+    # print (kruisingsschema)
+    return (kruisingsschema)
 
-# NOG AAN TE PASSEN / VERVANGEN  :
-# menu
-def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
-    print()
-    print ("MENU:")
-    print ('"t" om het type kruising te kiezen')
-    print ('"g" om de allelen binnen de gameten van beide ouders te laten zien')
-    print ('"k" voor het kruisingsschema' )
-    print ('"f" voor fenotypen van de nakomelingen bij deze kruising' )
-    print ('"o" om opnieuw te beginnen, met een nieuwe kruising')
-    print ('"s" om te stoppen')
-    menuInput = input ('voer je keuze in, gevolgd door ENTER: ')
-    if  menuInput == "t":
-        keuze, template = invoerKruisingstype()
-    elif menuInput == "g":
-        gametenPrinten(genoVader, genoMoeder)
-    elif menuInput == "k":
-        kruisingsschemaPrinten(genoVader, genoMoeder)
-    elif menuInput == "f": 
-        schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
-    elif menuInput == "o":
-        main() 
-    elif menuInput == "s":
-        return "stop"
+# NEW losse functie om dimensies en aantal paren te bepalen aan de hand van het ingevoerde type kruising
+def dimensieBepalen(type):
+    if type == "m": #dimensies van het kruisingsschema goedzetten
+        dimensie = 2
+        paren = 1
+    elif type == "d":
+        dimensie = 4 
+        paren = 2
     else:
-        menu(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
+        dimensie = 8
+        paren =3
+    return dimensie, paren
 
-# # kruisen, vullen van de list of lists
-# def vulKruisingsschema (gametenVader, gametenMoeder):
-#     kruisingsschema =[]  
-#     for v in range (4):
-#         rij =[]
-#         for m in range(4):
-#             gametenPa = gametenVader[v]
-#             gametenMa= gametenMoeder[m]
-#             # volgorde grote en kleine letters goedzetten
-#             if (gametenPa[0] == 'a') and (gametenMa[0] =='A'):
-#                 paar1 = gametenMa[0]+gametenPa[0]
-#             else:
-#                 paar1 = gametenPa[0] + gametenMa[0]
-#             if (gametenPa[1] == 'b') and (gametenMa[1] =='B'):
-#                 paar2 = gametenMa[1]+gametenPa[1]
-#             else:
-#                 paar2 = gametenPa[1] + gametenMa[1]          
-#             genoKind = paar1 + paar2
-#             rij.append(genoKind)
-#             # print (rij[m])
-#         kruisingsschema.append(rij)
-#         # print (kruisingsschema)
-#     return (kruisingsschema)
-
-def printSchema(schema, gametenVader, gametenMoeder):
-    print ("   ", "|", end='')
+# NEW schaalbare functie om kruisingsschema'S te printen
+def printSchema(type, schema, gametenVader, gametenMoeder):
+    dimensie, paren =dimensieBepalen (type)
+    breedte = 8 + dimensie*11
+    print ("x".ljust(6),"|", end='')
     for gameet in gametenVader:
-        print (" ",gameet, " |", end='')
+        print (" ",gameet.ljust(6), " |", end='')
     print()
-    print ("-" * 33)
-    for i in range (4):
-        print (gametenMoeder[i], " |",end='')
-        for j in range (4):
-            print (schema[i][j], " |", end='')
+    print ("-" * breedte)
+    for gameet in gametenMoeder:
+        print (gameet.ljust(5), " |",end='')
+        i = gametenMoeder.index(gameet)
+        for j in range (dimensie):
+            print (" ",schema[i][j].ljust(6), " |", end='')
         print()
-        print ("-" * 33)
+        print ("-" * breedte)
 
-def kruisingsschemaPrinten(genoVader, genoMoeder):
-    print("\033c", end="") # ansi escapecodes om venster leeg te trappen
-    print ("Kruisingsschema bij de kruising", genoVader, " x ", genoMoeder)
-    print ()
-    gametenVader = maakGametenLijst(genoVader)
-    gametenMoeder = maakGametenLijst(genoMoeder)
-    kruisingsschema = vulKruisingsschema(gametenVader,gametenMoeder)
-    printSchema (kruisingsschema,gametenVader,gametenMoeder)
-    print()
+# NEW genotype vertalen naar fenotype m.b.v. dictionary   
+def vertaal(paar, fenoDict):
+    if paar == "aa":
+        fenotype = fenoDict ["a"]
+    elif paar == "AA" or paar == "Aa":
+        fenotype = fenoDict ["A"]
+    elif paar == "bb":
+        fenotype = fenoDict ["b"]
+    elif paar == "BB" or "Bb":
+        fenotype = fenoDict["B"]
+    elif paar == "cc":
+        fenotype = fenoDict["c"]
+    else:
+        fenotype = fenoDict["C"]
+    return fenotype
+        
 
-def gametenPrinten(genoVader,genoMoeder):
-    print("\033c", end="") # ansi escapecodes om venster leeg te trappen
-    print ("Gameten van de ouders bij de kruising", genoVader, " x ", genoMoeder)
-    print ()
-    gametenVader = maakGametenLijst(genoVader)
-    gametenMoeder = maakGametenLijst(genoMoeder)
-    print ('gameten van vader:  ',gametenVader)
-    print ('gameten van moeder: ',gametenMoeder)
-
-def bye():
-    print ("Bedankt voor het gebruik van dit programma")
-    print ("Veel succes met het nog meer leren over genetica")
-   
-# genotype vertalen naar fenotype
-def translateFenotype(genotype, dominantA,  recessiefA, dominantB, recessiefB):
-    if genotype == "aabb":
-        feno = recessiefA + "-" + recessiefB
-        return feno
-    elif genotype[:1]=="aa" and genotype[2] =="B":
-        feno = recessiefA + "-" + dominantB
-        return feno
-    elif genotype[0] == "A"and genotype[2:]=="bb":
-        feno = dominantA + "-" + recessiefB
-        return feno
-    else: 
-        feno = dominantA + "-" + dominantB
-        return feno
-
-# kruisingsschema vullen, ieder genotype naar de vertaler sturen, de placeholders voor fenotype printen in het schema
-def schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB):
-    print("\033c", end="") # ansi escapecodes om venster leeg te trappen
-    print ("fenotype printen")
-    print()
-    gametenVader = maakGametenLijst(genoVader)
-    gametenMoeder = maakGametenLijst(genoMoeder)
-    kruisingsschema = vulKruisingsschema(gametenVader,gametenMoeder)
-    print ("   ", "|", end='')
-    for gameet in gametenVader:
-        print ("       ",gameet.ljust(6), " |", end='')
-    print()
-    print ("-" * 72 )
-    for i in range (4):
-        print (gametenMoeder[i], " |",end='')
-        for j in range (4):
-            fenotype=translateFenotype(kruisingsschema[i][j],dominantA,recessiefA,dominantB,recessiefB)
-            print (fenotype.rjust(15), "|", end='')
-        print()
-        print ("-" * 72 )
-
-# MAIN UITGESCHAKELD OM DE FUNCTIES TE TESTEN
-# def main():
-    # print("\033c", end="") # ansi escapecodes om venster leeg te trappen
-    # welkom() 
-    # keuze = None
-    # dominantA, recessiefA, dominantB, recessiefB =invoerFenotypen()
-    # genoVader = invoerVader()
-    # genoMoeder = invoerMoeder()
-    # while keuze != "stop":
-    #     keuze = menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB)
-    # bye()
-
-
-
-# if __name__ == "__main__":
-#     main()
+# WORK IN PROGRESS array met fenotypen maken, werkt al voor monohybride kruising, nog schaalbaar maken met dimensie/paren op basis van type
+def maakFenoArray(kruisingsschema, fenoDict, type):
+    dimensie, paren =dimensieBepalen (type)
+    fenoArray =[]
+    for rij in kruisingsschema:
+        nieuweRij = []
+        for kolom in rij:
+            feno = vertaal(kolom, fenoDict)
+            nieuweRij.append(feno)
+        # print (nieuweRij)
+        fenoArray.append(nieuweRij)
+    # print (fenoArray)
+    return fenoArray
 
 # FUNCTIE VOOR DE TESTRUNS >> BASIS VOOR DE NIEUWE MAIN() EN MENU()
-
-def runme1():
+def runme():
     type, template = invoerKruisingstype()  # template haalt op of het de vorm aa, aabb, of aabbcc moet hebben
     print (type)
     #invoer
@@ -292,12 +204,78 @@ def runme1():
     print ('genotype gameten vader: ', gametenVader) #array
     print ('genotype gameten Moeder: ', gametenMoeder) #array
     print()
-    vulKruisingsschema (type,gametenVader, gametenMoeder)
+    kruisingsschema = vulKruisingsschema (type,gametenVader, gametenMoeder)
+    print ("het kruisingsschema van deze kruising is")
+    printSchema(type, kruisingsschema, gametenVader, gametenMoeder)
+    # maakFenoArray(kruisingsschema, fenoDict, type)
+    fenoSchema=maakFenoArray(kruisingsschema, fenoDict, type)
+    print()
+    print("op basis van dit kruisingsschema is de verdeling van de fenotypen als volgt (werkt nog niet bij di- en trihybride kruisingen)")
+    print()
+    printSchema(type, fenoSchema, gametenVader, gametenMoeder)
+    
+runme()    
+
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#                                                               NOG AAN TE PASSEN / VERVANGEN  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+# menu
+# def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
+#     print()
+#     print ("MENU:")
+#     print ('"t" om het type kruising te kiezen')
+#     print ('"g" om de allelen binnen de gameten van beide ouders te laten zien')
+#     print ('"k" voor het kruisingsschema' )
+#     print ('"f" voor fenotypen van de nakomelingen bij deze kruising' )
+#     print ('"o" om opnieuw te beginnen, met een nieuwe kruising')
+#     print ('"s" om te stoppen')
+#     menuInput = input ('voer je keuze in, gevolgd door ENTER: ')
+#     if  menuInput == "t":
+#         keuze, template = invoerKruisingstype()
+#     elif menuInput == "g":
+#         gametenPrinten(genoVader, genoMoeder)
+#     elif menuInput == "k":
+#         kruisingsschemaPrinten(genoVader, genoMoeder)
+#     elif menuInput == "f": 
+#         schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
+#     elif menuInput == "o":
+#         main() 
+#     elif menuInput == "s":
+#         return "stop"
+#     else:
+#         menu(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
 
 
-runme1()
+# def bye():
+#     print ("Bedankt voor het gebruik van dit programma")
+#     print ("Veel succes met het nog meer leren over genetica")
+   
+
+# MAIN, UITGESCHAKELD OM DE FUNCTIES TE TESTEN
+# def main():
+    # print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+    # welkom() 
+    # keuze = None
+    # dominantA, recessiefA, dominantB, recessiefB =invoerFenotypen()
+    # genoVader = invoerVader()
+    # genoMoeder = invoerMoeder()
+    # while keuze != "stop":
+    #     keuze = menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB)
+    # bye()
 
 
+
+# if __name__ == "__main__":
+#     main()
+
+
+
+
+
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#                                                               RECYCLE BIN   >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 # vervangen code:
 
@@ -338,3 +316,85 @@ runme1()
 #             # print (gameet)
 #             gametenLijst.append(gameet) 
 #     return gametenLijst
+
+# # kruisen, vullen van de list of lists
+# def vulKruisingsschema (gametenVader, gametenMoeder):
+#     kruisingsschema =[]  
+#     for v in range (4):
+#         rij =[]
+#         for m in range(4):
+#             gametenPa = gametenVader[v]
+#             gametenMa= gametenMoeder[m]
+#             # volgorde grote en kleine letters goedzetten
+#             if (gametenPa[0] == 'a') and (gametenMa[0] =='A'):
+#                 paar1 = gametenMa[0]+gametenPa[0]
+#             else:
+#                 paar1 = gametenPa[0] + gametenMa[0]
+#             if (gametenPa[1] == 'b') and (gametenMa[1] =='B'):
+#                 paar2 = gametenMa[1]+gametenPa[1]
+#             else:
+#                 paar2 = gametenPa[1] + gametenMa[1]          
+#             genoKind = paar1 + paar2
+#             rij.append(genoKind)
+#             # print (rij[m])
+#         kruisingsschema.append(rij)
+#         # print (kruisingsschema)
+#     return (kruisingsschema)
+
+# MISSCHIEN NOG DEELS RECYCLEN
+# oude verzamelfunctie eruit omdat dan dingen dubbel gebeuren?
+# def kruisingsschemaPrinten(genoVader, genoMoeder):
+#     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+#     print ("Kruisingsschema bij de kruising", genoVader, " x ", genoMoeder)
+#     print ()
+#     gametenVader = maakGametenLijst(genoVader)
+#     gametenMoeder = maakGametenLijst(genoMoeder)
+#     kruisingsschema = vulKruisingsschema(gametenVader,gametenMoeder)
+#     printSchema (kruisingsschema,gametenVader,gametenMoeder)
+#     print()
+
+# # OUD
+# def gametenPrinten(genoVader,genoMoeder):
+#     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+#     print ("Gameten van de ouders bij de kruising", genoVader, " x ", genoMoeder)
+#     print ()
+#     gametenVader = maakGametenLijst(genoVader)
+#     gametenMoeder = maakGametenLijst(genoMoeder)
+#     print ('gameten van vader:  ',gametenVader)
+#     print ('gameten van moeder: ',gametenMoeder)
+
+# OUDE manier om genotype vertalen naar fenotype .. vervangen door met dictionary waarden in list of lists vervangen
+# def translateFenotype(genotype, dominantA,  recessiefA, dominantB, recessiefB):
+#     if genotype == "aabb":
+#         feno = recessiefA + "-" + recessiefB
+#         return feno
+#     elif genotype[:1]=="aa" and genotype[2] =="B":
+#         feno = recessiefA + "-" + dominantB
+#         return feno
+#     elif genotype[0] == "A"and genotype[2:]=="bb":
+#         feno = dominantA + "-" + recessiefB
+#         return feno
+#     else: 
+#         feno = dominantA + "-" + dominantB
+#         return feno
+
+# OUD kruisingsschema vullen, ieder genotype naar de vertaler sturen, de placeholders voor fenotype printen in het schema
+# def schemaTranslate(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB):
+#     print("\033c", end="") # ansi escapecodes om venster leeg te trappen
+#     print ("fenotype printen")
+#     print()
+#     gametenVader = maakGametenLijst(genoVader)
+#     gametenMoeder = maakGametenLijst(genoMoeder)
+#     kruisingsschema = vulKruisingsschema(gametenVader,gametenMoeder)
+#     print ("   ", "|", end='')
+#     for gameet in gametenVader:
+#         print ("       ",gameet.ljust(6), " |", end='')
+#     print()
+#     print ("-" * 72 )
+#     for i in range (4):
+#         print (gametenMoeder[i], " |",end='')
+#         for j in range (4):
+#             fenotype=translateFenotype(kruisingsschema[i][j],dominantA,recessiefA,dominantB,recessiefB)
+#             print (fenotype.rjust(15), "|", end='')
+#         print()
+#         print ("-" * 72 )
