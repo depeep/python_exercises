@@ -41,15 +41,18 @@ def enterNewText():
 def menu(keuze,text, separators, acronyms):
     if keuze == "e":
         text = enterNewText()
-        # inputKeuze()
+        keuze =None
     elif keuze == "s":
         print ('the number of separators is:', number_of_separators(text, separators))
+        keuze = None
     elif keuze == "w":
         print ('the number of words is:', number_of_words(text))
+        keuze = None
     elif keuze == "a":
         print (text)
         print ("expands to: ")
         print (expand_acronyms(text, acronyms))
+        keuze = None
     elif keuze == "q":
         return "q"
     else:
