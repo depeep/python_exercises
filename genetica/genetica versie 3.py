@@ -89,8 +89,49 @@ def maakGametenLijst(kruisingstype, genotype):
                         gameet = genotype[i]+genotype[k]+genotype[l]
                         gametenLijst.append(gameet) 
     return gametenLijst
-    
-    
+
+# NEW losgehaald functie om letters in de goede volgorde te zetten
+            # volgorde grote en kleine letters goedzetten
+def lettervolgorde():
+    if (gametenPa[0] == 'a') and (gametenMa[0] =='A'):
+        paar1 = gametenMa[0]+gametenPa[0]
+    else:
+        paar1 = gametenPa[0] + gametenMa[0]
+    if (gametenPa[1] == 'b') and (gametenMa[1] =='B'):
+        paar2 = gametenMa[1]+gametenPa[1]
+    else:
+        paar2 = gametenPa[1] + gametenMa[1]          
+            
+
+# kruisen, vullen van de list of lists
+def vulKruisingsschema (type,gametenVader, gametenMoeder):
+    if type == "m": #dimensies van het kruisingsschema goedzetten
+        dimensie = 2
+    elif type == "d":
+        dimensie = 4
+    else:
+        dimensie = 3
+   
+    kruisingsschema =[]  
+    for v in range (dimensie):
+        rij =[]
+        for m in range (dimensie):
+            gametenPa = gametenVader[v]
+            gametenMa= gametenMoeder[m]
+            genoKind =''
+            for positie in range(dimensie-1):
+                allelPa = gametenPa[positie]
+                for i in range (dimensie):
+                    allelMa = gametenMa[i]
+                    paar = allelPa + allelMa
+                    genoKind = genoKind + paar
+                print (genoKind)
+            rij.append(genoKind)
+        print (rij)
+    #     kruisingsschema.append(rij)
+    #     # print (kruisingsschema)
+    # return (kruisingsschema)
+
 # NOG AAN TE PASSEN / VERVANGEN  :
 # menu
 def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
@@ -118,29 +159,29 @@ def menu(genoVader, genoMoeder,dominantA,recessiefA,dominantB,recessiefB):
     else:
         menu(genoVader, genoMoeder, dominantA,recessiefA,dominantB,recessiefB)
 
-# kruisen, vullen van de list of lists
-def vulKruisingsschema (gametenVader, gametenMoeder):
-    kruisingsschema =[]  
-    for v in range (4):
-        rij =[]
-        for m in range(4):
-            gametenPa = gametenVader[v]
-            gametenMa= gametenMoeder[m]
-            # volgorde grote en kleine letters goedzetten
-            if (gametenPa[0] == 'a') and (gametenMa[0] =='A'):
-                paar1 = gametenMa[0]+gametenPa[0]
-            else:
-                paar1 = gametenPa[0] + gametenMa[0]
-            if (gametenPa[1] == 'b') and (gametenMa[1] =='B'):
-                paar2 = gametenMa[1]+gametenPa[1]
-            else:
-                paar2 = gametenPa[1] + gametenMa[1]          
-            genoKind = paar1 + paar2
-            rij.append(genoKind)
-            # print (rij[m])
-        kruisingsschema.append(rij)
-        # print (kruisingsschema)
-    return (kruisingsschema)
+# # kruisen, vullen van de list of lists
+# def vulKruisingsschema (gametenVader, gametenMoeder):
+#     kruisingsschema =[]  
+#     for v in range (4):
+#         rij =[]
+#         for m in range(4):
+#             gametenPa = gametenVader[v]
+#             gametenMa= gametenMoeder[m]
+#             # volgorde grote en kleine letters goedzetten
+#             if (gametenPa[0] == 'a') and (gametenMa[0] =='A'):
+#                 paar1 = gametenMa[0]+gametenPa[0]
+#             else:
+#                 paar1 = gametenPa[0] + gametenMa[0]
+#             if (gametenPa[1] == 'b') and (gametenMa[1] =='B'):
+#                 paar2 = gametenMa[1]+gametenPa[1]
+#             else:
+#                 paar2 = gametenPa[1] + gametenMa[1]          
+#             genoKind = paar1 + paar2
+#             rij.append(genoKind)
+#             # print (rij[m])
+#         kruisingsschema.append(rij)
+#         # print (kruisingsschema)
+#     return (kruisingsschema)
 
 def printSchema(schema, gametenVader, gametenMoeder):
     print ("   ", "|", end='')
@@ -251,6 +292,7 @@ def runme1():
     print ('genotype gameten vader: ', gametenVader) #array
     print ('genotype gameten Moeder: ', gametenMoeder) #array
     print()
+    vulKruisingsschema (type,gametenVader, gametenMoeder)
 
 
 runme1()
