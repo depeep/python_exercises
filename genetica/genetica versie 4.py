@@ -127,13 +127,13 @@ def vulKruisingsschema (type,gametenVader, gametenMoeder):
 # NEW losse functie om dimensies en aantal paren te bepalen aan de hand van het ingevoerde type kruising
 def dimensieBepalen(type):
     if type == "m": #dimensies van het kruisingsschema goedzetten
-        dimensie = 2
+        dimensie = 2    # ABSTRACTER TE MAKEN MET 2**PAREN!!! scheelt een parameter
         paren = 1
     elif type == "d":
         dimensie = 4 
         paren = 2
     else:
-        dimensie = 8
+        dimensie = 8  
         paren =3
     return dimensie, paren
 
@@ -158,11 +158,11 @@ def printSchema(type, schema, gametenVader, gametenMoeder):
 def vertaal(paar, fenoDict):
     if paar == "aa":
         fenotype = fenoDict ["a"]
-    elif paar == "AA" or paar == "Aa":
+    elif paar in ["AA", "Aa"]:
         fenotype = fenoDict ["A"]
     elif paar == "bb":
         fenotype = fenoDict ["b"]
-    elif paar == "BB" or "Bb":
+    elif paar in ["BB", "Bb"]:
         fenotype = fenoDict["B"]
     elif paar == "cc":
         fenotype = fenoDict["c"]
@@ -174,25 +174,39 @@ def vertaal(paar, fenoDict):
 # WORK IN PROGRESS array met fenotypen maken, werkt al voor monohybride kruising, nog schaalbaar maken met dimensie/paren op basis van type
 def maakFenoArray(kruisingsschema, fenoDict, type):
     dimensie, paren =dimensieBepalen (type)
+    Aantalletters=paren*2
     fenoArray =[]
     for rij in kruisingsschema:
         nieuweRij = []
-        for kolom in rij:
-            feno = vertaal(kolom, fenoDict)
+        for genotype in rij:
+            # print (genotype, end='')
+            feno=''
+            for letterpaar in range(0, Aantalletters, 2):
+                begin = letterpaar
+                eind  = letterpaar + 1
+                letters = genotype[begin]+ genotype[eind]
+                print(letters)
+                fenoplus = vertaal(letters, fenoDict)
+                # print (fenoplus)
+                feno = feno + ' ' + fenoplus
+            #     print (feno)
+            # print(feno)
+            print()
             nieuweRij.append(feno)
-        # print (nieuweRij)
+        print (nieuweRij)
         fenoArray.append(nieuweRij)
-    # print (fenoArray)
+    print (fenoArray)
     return fenoArray
 
-# FUNCTIE VOOR DE TESTRUNS >> BASIS VOOR DE NIEUWE MAIN() EN MENU()
-def runme():
+# FUNCTIE VOOR DE TESTRUNS >> dictionary fenotypen en genovader ingevuld
+
+def runme2():
     type, template = invoerKruisingstype()  # template haalt op of het de vorm aa, aabb, of aabbcc moet hebben
     print (type)
     #invoer
-    fenoDict = invoerFenotypen(type)
-    genoVader=invoerVader(template)
-    genoMoeder = invoerMoeder(template)
+    fenoDict = {'A':'zwart', 'a':  'rood', 'B' : 'bont', 'b': 'egaal', 'C' : 'gehoornd', 'c' : 'hoornloos'}
+    genoVader='AaBbCc'
+    genoMoeder = 'AaBbCc'
     # verwerking 
     gametenVader = maakGametenLijst(type, genoVader)
     gametenMoeder = maakGametenLijst(type, genoMoeder)
@@ -204,17 +218,50 @@ def runme():
     print ('genotype gameten vader: ', gametenVader) #array
     print ('genotype gameten Moeder: ', gametenMoeder) #array
     print()
+   
     kruisingsschema = vulKruisingsschema (type,gametenVader, gametenMoeder)
+    print(kruisingsschema)
     print ("het kruisingsschema van deze kruising is")
     printSchema(type, kruisingsschema, gametenVader, gametenMoeder)
-    # maakFenoArray(kruisingsschema, fenoDict, type)
+    maakFenoArray(kruisingsschema, fenoDict, type)
     fenoSchema=maakFenoArray(kruisingsschema, fenoDict, type)
     print()
     print("op basis van dit kruisingsschema is de verdeling van de fenotypen als volgt (werkt nog niet bij di- en trihybride kruisingen)")
     print()
     printSchema(type, fenoSchema, gametenVader, gametenMoeder)
     
-runme()    
+runme2()    
+
+# # FUNCTIE VOOR DE TESTRUNS >> BASIS VOOR DE NIEUWE MAIN() EN MENU()
+# def runme():
+#     type, template = invoerKruisingstype()  # template haalt op of het de vorm aa, aabb, of aabbcc moet hebben
+#     print (type)
+#     #invoer
+#     fenoDict = invoerFenotypen(type)
+#     genoVader=invoerVader(template)
+#     genoMoeder = invoerMoeder(template)
+#     # verwerking 
+#     gametenVader = maakGametenLijst(type, genoVader)
+#     gametenMoeder = maakGametenLijst(type, genoMoeder)
+#     print()
+#     print ("Ingevoerde gegevens in hun de vorm van hun variabelen" ) # misschien leuk om met type ook het type af te drukken
+#     print ('fenotype dictionary: ', fenoDict) # dictionary --- op letten bij het vertalen van genotype naar fenotype
+#     print ('genovader ', genoVader) #string
+#     print ('genomoeder ', genoMoeder) #string
+#     print ('genotype gameten vader: ', gametenVader) #array
+#     print ('genotype gameten Moeder: ', gametenMoeder) #array
+#     print()
+#     kruisingsschema = vulKruisingsschema (type,gametenVader, gametenMoeder)
+#     print ("het kruisingsschema van deze kruising is")
+#     printSchema(type, kruisingsschema, gametenVader, gametenMoeder)
+#     # maakFenoArray(kruisingsschema, fenoDict, type)
+#     fenoSchema=maakFenoArray(kruisingsschema, fenoDict, type)
+#     print()
+#     print("op basis van dit kruisingsschema is de verdeling van de fenotypen als volgt (werkt nog niet bij di- en trihybride kruisingen)")
+#     print()
+#     printSchema(type, fenoSchema, gametenVader, gametenMoeder)
+    
+# runme()    
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 #                                                               NOG AAN TE PASSEN / VERVANGEN  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
