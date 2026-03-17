@@ -140,21 +140,22 @@ def dimensieBepalen(type):
 # NEW schaalbare functie om kruisingsschema'S te printen
 def printSchema(type, schema, gametenVader, gametenMoeder):
     dimensie, paren =dimensieBepalen (type)
-    breedte = 8 + dimensie*11
-    print ("x".ljust(6),"|", end='')
+    breedteVak = (paren*5)
+    breedteRest = paren* 10
+    print (breedteVak*" "+"|", end='')
     for gameet in gametenVader:
-        print (" ",gameet.ljust(6), " |", end='')
+        print (" "*paren + gameet +" "*(breedteVak) + " " *paren +"|", end='')
     print()
-    print ("-" * breedte)
+    print ("-" * (breedteVak) + "|" + ("-" *(breedteVak*2-dimensie)+"|")*dimensie)
     for gameet in gametenMoeder:
-        print (gameet.ljust(5), " |",end='')
+        print (gameet.ljust(breedteVak), " |",end='')
         i = gametenMoeder.index(gameet)
         for j in range (dimensie):
-            print (" ",schema[i][j].ljust(6), " |", end='')
+            print (" ",schema[i][j].ljust(paren), " |", end='')
         print()
-        print ("-" * breedte)
+        print ("-" * (paren*dimensie))
 
-# NEW genotype vertalen naar fenotype m.b.v. dictionary   
+# NEW genotype vertalen naar fenotype m.b.v. dictionary   >> wat op verzinnen, kan eenvoudiger
 def vertaal(paar, fenoDict):
     if paar == "aa":
         fenotype = fenoDict ["a"]
@@ -171,7 +172,7 @@ def vertaal(paar, fenoDict):
     return fenotype
         
 
-# WORK IN PROGRESS array met fenotypen maken, werkt al voor monohybride kruising, nog schaalbaar maken met dimensie/paren op basis van type
+# schaalbaar gemaakt met dimensie/paren op basis van type >> verder abstraheren (dimensie = 2**paren)
 def maakFenoArray(kruisingsschema, fenoDict, type):
     dimensie, paren =dimensieBepalen (type)
     Aantalletters=paren*2
