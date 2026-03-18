@@ -33,21 +33,36 @@ def invoerFenotypen(kruisingstype):
         feno = input (string)
         fenoDict[allel] = feno
     return (fenoDict)
-        
-# NEW keuzemenu kruisingstypen en template vullen
+
+# NEW schaalbaar invoer kruisingstype
 def invoerKruisingstype():
-    keuze = None
-    while keuze not in ["m", "d", "t"]:
-        keuze = input ('Kies "m" voor een monohybride, "d" voor een dihybride of "t" voor een trihybride kruising :')
-        if keuze == "m":
-            template = "aa"
-        elif keuze == "d":
-            template = "aabb"
-        elif keuze == "t":
-            template = "aabbcc"
+    paren = None
+    print ("voer het aantal allelenparen in dat  je wilt gebruiken voor je kruising")
+    getalOpties =[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    templateOptions = "aabbccddeeffgghhiijj"
+    while paren not in getalOpties:
+        paren = int(input ('Kies "1" voor een monohybride, "2" voor een dihybride of "3" voor een trihybride kruising enz. :'))
+        if paren in getalOpties:
+            template= templateOptions[0:paren*2]
+            print (template)
         else:
-            print ('kies "m", "d" of "t:')
-    return keuze, template
+            print ('kies een getal tussen 0 en 10')
+    return int(paren), template
+
+# # NEW keuzemenu kruisingstypen en template vullen
+# def invoerKruisingstypeOUD():
+#     keuze = None
+#     while keuze not in ["m", "d", "t"]:
+#         keuze = input ('Kies "m" voor een monohybride, "d" voor een dihybride of "t" voor een trihybride kruising :')
+#         if keuze == "m":
+#             template = "aa"
+#         elif keuze == "d":
+#             template = "aabb"
+#         elif keuze == "t":
+#             template = "aabbcc"
+#         else:
+#             print ('kies "m", "d" of "t:')
+#     return keuze, template
 
 # NEW  invoer genotypen ouders, schaalbaar, template = aa/aabb/aabbcc afhankelijk van mono-di-of trihybride kruising
 def invoerVader(template):
@@ -126,10 +141,10 @@ def vulKruisingsschema (type,gametenVader, gametenMoeder):
 
 # NEW losse functie om dimensies en aantal paren te bepalen aan de hand van het ingevoerde type kruising
 def dimensieBepalen(type):
-    if type == "m": #dimensies van het kruisingsschema goedzetten
+    if type == "1": #dimensies van het kruisingsschema goedzetten
         dimensie = 2    # ABSTRACTER TE MAKEN MET 2**PAREN!!! scheelt een parameter
         paren = 1
-    elif type == "d":
+    elif type == "2":
         dimensie = 4 
         paren = 2
     else:
@@ -202,9 +217,9 @@ def maakFenoArray(kruisingsschema, fenoDict, type):
 
 # FUNCTIE VOOR DE TESTRUNS >> dictionary fenotypen en genovader ingevuld
 
-def runme2():
+def demo1():
     type, template = invoerKruisingstype()  # template haalt op of het de vorm aa, aabb, of aabbcc moet hebben
-    print (type)
+    print (type, template)
     #invoer
     fenoDict = {'A':'zwart', 'a':  'rood', 'B' : 'bont', 'b': 'egaal', 'C' : 'gehoornd', 'c' : 'hoornloos'}
     genoVader='AaBbCc'
@@ -232,7 +247,7 @@ def runme2():
     print()
     printSchema(type, fenoSchema, gametenVader, gametenMoeder)
     
-runme2()    
+demo1()    
 
 # # FUNCTIE VOOR DE TESTRUNS >> BASIS VOOR DE NIEUWE MAIN() EN MENU()
 # def runme():
