@@ -171,7 +171,7 @@ def vertaal(paar, fenoDict):
     return fenotype
         
 
-# WORK IN PROGRESS array met fenotypen maken, werkt al voor monohybride kruising, nog schaalbaar maken met dimensie/paren op basis van type
+# New, schaalbaar gemaakt met dimensie/paren op basis van type
 def maakFenoArray(kruisingsschema, fenoDict, type):
     dimensie, paren =dimensieBepalen (type)
     Aantalletters=paren*2

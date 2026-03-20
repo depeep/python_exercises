@@ -16,7 +16,7 @@ def welkom():
     print ('-bepaal de mogelijke fentoypen van de nakomelingen')
     print ()
     
-# NEW invoer fenotypen obv type kruising
+# NEW invoer fenotypen obv type kruising>> aanpassen om te schalen
 def invoerFenotypen(kruisingstype):
     fenoDict = {}
     opties = ['A','a', 'B', 'b', 'C', 'c']
@@ -34,7 +34,7 @@ def invoerFenotypen(kruisingstype):
         fenoDict[allel] = feno
     return (fenoDict)
 
-# NEW schaalbaar invoer kruisingstype
+# NEW schaalbaar invoer kruisingstype geeft aantal paren terug en template voor invoer genotypen
 def invoerKruisingstype():
     paren = None
     print ("voer het aantal allelenparen in dat  je wilt gebruiken voor je kruising")
@@ -47,22 +47,9 @@ def invoerKruisingstype():
             print (template)
         else:
             print ('kies een getal tussen 0 en 10')
-    return int(paren), template
+    return paren, template
 
-# # NEW keuzemenu kruisingstypen en template vullen
-# def invoerKruisingstypeOUD():
-#     keuze = None
-#     while keuze not in ["m", "d", "t"]:
-#         keuze = input ('Kies "m" voor een monohybride, "d" voor een dihybride of "t" voor een trihybride kruising :')
-#         if keuze == "m":
-#             template = "aa"
-#         elif keuze == "d":
-#             template = "aabb"
-#         elif keuze == "t":
-#             template = "aabbcc"
-#         else:
-#             print ('kies "m", "d" of "t:')
-#     return keuze, template
+
 
 # NEW  invoer genotypen ouders, schaalbaar, template = aa/aabb/aabbcc afhankelijk van mono-di-of trihybride kruising
 def invoerVader(template):
@@ -85,7 +72,7 @@ def invoerMoeder(template):
 # NEW functie om gametenlijst te maken van een ouder
 def maakGametenLijst(kruisingstype, genotype):
     gametenLijst = []
-    if kruisingstype == "m":
+    if kruisingstype == 1:
         for i in range (2):
             gameet= genotype[i]
             gametenLijst.append(gameet) 
@@ -105,7 +92,7 @@ def maakGametenLijst(kruisingstype, genotype):
                         gametenLijst.append(gameet) 
     return gametenLijst
 
-# NEW losgehaald functie om grote en kleine letter in de goede volgorde te zetten
+# V NEW losgehaald functie om grote en kleine letter in de goede volgorde te zetten, geschaald naar max 10 paren
 def verbeterVolgorde(paar):
     if paar == "aA":
         return "Aa"
@@ -113,12 +100,27 @@ def verbeterVolgorde(paar):
         return "Bb"
     elif paar == "cC":
         return "Cc"
+    elif paar == "dD":
+        return "Dd"
+    elif paar == "eE":
+        return "Ee"
+    elif paar == "fF":
+        return "Ff"
+    elif paar == "gG":
+        return "Gg"
+    elif paar == "hH":
+        return "hH"
+    elif paar == "iI":
+        return "Ii"
+    elif paar == "jJ":
+        return "Jj"
     else:
         return paar
     
 # NEW kruisen, vullen van de list of lists
 def vulKruisingsschema (type,gametenVader, gametenMoeder):
     dimensie, paren = dimensieBepalen(type)
+    print (dimensie, paren)  #check
     kruisingsschema =[]  
     for v in range (dimensie):
         rij =[]
@@ -139,8 +141,13 @@ def vulKruisingsschema (type,gametenVader, gametenMoeder):
     # print (kruisingsschema)
     return (kruisingsschema)
 
-# NEW losse functie om dimensies en aantal paren te bepalen aan de hand van het ingevoerde type kruising
+# NEW losse functie om dimensies en aantal paren te bepalen aan de hand van het ingevoerde type kruising verbeterd
 def dimensieBepalen(type):
+    paren = type
+    dimensie = 2**paren
+    return dimensie, paren
+
+def OLDdimensieBepalen(type):
     if type == "1": #dimensies van het kruisingsschema goedzetten
         dimensie = 2    # ABSTRACTER TE MAKEN MET 2**PAREN!!! scheelt een parameter
         paren = 1
@@ -342,6 +349,21 @@ demo1()
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 # vervangen code:
+# # NEW keuzemenu kruisingstypen en template vullen
+# def invoerKruisingstypeOUD():
+#     keuze = None
+#     while keuze not in ["m", "d", "t"]:
+#         keuze = input ('Kies "m" voor een monohybride, "d" voor een dihybride of "t" voor een trihybride kruising :')
+#         if keuze == "m":
+#             template = "aa"
+#         elif keuze == "d":
+#             template = "aabb"
+#         elif keuze == "t":
+#             template = "aabbcc"
+#         else:
+#             print ('kies "m", "d" of "t:')
+#     return keuze, template
+
 
 # OUD hardcoded
 # def invoerFenotypen():
