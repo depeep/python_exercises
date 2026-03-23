@@ -1,36 +1,36 @@
 class Account:
-    def __init__(self,id, balance, anualInterestRate):
-        self.id = int(id)
-        self.balance = float(balance)
-        self.anualInterestRate =float(anualInterestRate)
+    def __init__(self,id, balance, anualInterestRate): # na self overbodig
+        self.__id= int(id)
+        self.__balance = float(balance)
+        self.__anualInterestRate =float(anualInterestRate)
 
     def setId(self, id):
-        self.id = id
+        self.__id= id
 
-    def setBalance(self, balance):
-        self.balance = balance
+    def setBalance(self, balance): #overbodig hier
+        self.__balance = balance
 
     def setAnulaInterestRate( self, anualInterestRate):
-        self.anualInterestRate = anualInterestRate
+        self.__anualInterestRate = anualInterestRate
 
     def getId(self):
-        return self.id
+        return self.__id
 
     def getBalance(self):
-        return self.balance 
+        return self.__balance 
 
     def getAnulaInterestRate(self):
-        return self.anualInterestRate
+        return self.__anualInterestRate
     
     def getAnualInterest(self):
-        anualInterest = self.balance * self.anualInterestRate /100
+        anualInterest = self.__balance * self.__anualInterestRate /100
         return anualInterest
     
     def deposit(self, depositAmount):
-        self.balance += depositAmount
+        self.__balance += depositAmount
 
     def withdraw(self, withdrawalAmount):
-        self.balance -= withdrawalAmount
+        self.__balance -= withdrawalAmount
 
 myAccount = Account(1122, 20000, 4.5)
 
