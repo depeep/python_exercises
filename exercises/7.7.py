@@ -1,23 +1,22 @@
-from datetime import datetime
-from datetime import time
+
 import time
 
 class Stopwatch:
     def __init__(self):
-        self.__startTime = datetime.now().time()
-        self.__endTime = datetime.now().time()
+        self.__startTime = time.time()
+        self.__endTime = time.time()
 
     def start(self):
-        self.__startTime = datetime.now().time()
+        self.__startTime = time.time()
 
 
     def stop(self):   
-        self.__endTime = datetime.now().time()
+        self.__endTime = time.time()
 
  
     def getElapsedTime(self):
-        start = int(self.__startTime())
-        end = int(self.__endTime())
+        start = self.__startTime
+        end = self.__endTime
         elapsed = end - start
         return elapsed
 
@@ -27,7 +26,10 @@ def main():
     time.sleep (5)
     myStopwatch.stop()
     print(myStopwatch.getElapsedTime())
-    sleep(5)
+    time.sleep(10)
+    myStopwatch.stop()
+    print(myStopwatch.getElapsedTime())
+    time.sleep(5)
     print(myStopwatch.getElapsedTime())
 
 
