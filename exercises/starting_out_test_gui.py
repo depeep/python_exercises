@@ -265,46 +265,165 @@
 #     my_gui = MyGUI()
 
 # ##############################################################################################
+#  omrekekenen en resutlat in label zetten, in plaats van een messagebox, met een StringVar en een label die de waarde van de StringVar weergeeft, de StringVar wordt geupdate in de convert functie
+# import tkinter
+# import tkinter.messagebox
+
+
+# class MyKiloConverterGUI:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+#         self.topFrame = tkinter.Frame()
+#         self.midFrame = tkinter.Frame()  
+#         self.bottomFrame = tkinter.Frame()
+#         self.promptLabel = tkinter.Label(self.topFrame, text="Enter distance in kilometers:")
+#         self.kiloEntry = tkinter.Entry(self.topFrame, width=10)
+#         self.calcButton = tkinter.Button(self.bottomFrame, text="Convert", command=self.convert)
+#         self.quitButton= tkinter.Button(self.bottomFrame, text="Quit", command=self.mainWindow.destroy)
+
+#         self.value= tkinter.StringVar() 
+
+#         self.descriptionLabel = tkinter.Label(self.midFrame, text="Distance in miles:")
+#         self.milesLabel = tkinter.Label(self.midFrame, textvariable=self.value)
+        
+#         self.descriptionLabel.pack(side="left")
+#         self.milesLabel.pack(side="left")  
+#         self.calcButton.pack(side="left")
+#         self.quitButton.pack(side="left")
+#         self.promptLabel.pack(side="left")
+#         self.kiloEntry.pack(side="left")
+       
+#         self.topFrame.pack(ipadx=10, ipady=10, padx=10, pady=10)
+#         self.midFrame.pack(ipadx=10, ipady=10, padx=10, pady=10)
+#         self.bottomFrame.pack(  ipadx=10, ipady=10, padx=10, pady=10) 
+
+#         tkinter.mainloop()
+
+#     def convert(self):
+#         kilo = float(self.kiloEntry.get())
+#         miles = kilo * 0.6214
+#         self.value.set(miles) # je kunt set en get gebruiken om de waarde van een StringVar te veranderen en op te halen, in dit geval zetten we de waarde van miles in de StringVar value, die vervolgens wordt weergegeven in de milesLabel
+
+# if __name__ == "__main__":
+#     kiloconv = MyKiloConverterGUI()
+
+##############################################################################################
+# 13-15 radiobuttons
+
+# import tkinter
+# import tkinter.messagebox
+
+# class myGUI:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+
+#         self.topFrame = tkinter.Frame()
+#         self.bottomFrame = tkinter.Frame()
+
+#         self.radioVar =tkinter.IntVar() # IntVar is een variabele die een integer waarde kan opslaan, in dit geval gebruiken we het om de waarde van de radiobuttons op te slaan
+
+#         self.rb1 = tkinter.Radiobutton(self.topFrame, text="Option 1", variable=self.radioVar, value=1)
+#         self.rb2 = tkinter.Radiobutton(self.topFrame, text="Option 2", variable=self.radioVar, value=2)
+#         self.rb3 = tkinter.Radiobutton(self.topFrame, text="Option 3", variable=self.radioVar, value=3, command=self.showChoice)
+
+#         self.rb1.pack()
+#         self.rb2.pack()
+#         self.rb3.pack()
+
+#         self.okButton= tkinter.Button(self.bottomFrame, text="OK", command=self.showChoice)
+#         self.quitButton= tkinter.Button(self.bottomFrame, text="Quit", command=self.mainWindow.destroy)
+
+#         self.okButton.pack(side="left")
+#         self.quitButton.pack(side="left")
+
+#         self.topFrame.pack()
+#         self.bottomFrame.pack()
+#         tkinter.mainloop()
+
+#     def showChoice(self):
+#         tkinter.messagebox.showinfo("Selection", "You selected option " + str(self.radioVar.get())) # met get kun je de waarde van de IntVar ophalen, in dit geval de waarde van de geselecteerde radiobutton
+
+# if __name__ == "__main__":
+#     my_gui = myGUI()
+
+##############################################################################################
+
+# #13-16 checkbuttons, met een IntVar voor elke checkbox, en een functie die de geselecteerde opties laat zien in een messagebox
+# import tkinter
+# import tkinter.messagebox
+
+# class myGUI:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+
+#         self.topFrame = tkinter.Frame()
+#         self.bottomFrame = tkinter.Frame()
+
+#         self.cbVar1 =tkinter.IntVar() 
+#         self.cbVar2 =tkinter.IntVar() 
+#         self.cbVar3 =tkinter.IntVar() # IntVar is een variabele die een integer waarde kan opslaan, in dit geval gebruiken we het om de waarde van de checkboxes op te slaan
+
+#         self.cbVar1.set(0) # 0 betekent dat de checkbox niet is geselecteerd, 1 betekent dat de checkbox is geselecteerd
+#         self.cbVar2.set(0)
+#         self.cbVar3.set(0)  
+
+#         self.cb1 = tkinter.Checkbutton(self.topFrame, text="Option 1", variable=self.cbVar1 )
+#         self.cb2 = tkinter.Checkbutton(self.topFrame, text="Option 2", variable=self.cbVar2 )
+#         self.cb3 = tkinter.Checkbutton(self.topFrame, text="Option 3", variable=self.cbVar3)
+
+#         self.cb1.pack()
+#         self.cb2.pack()
+#         self.cb3.pack()
+
+#         self.okButton= tkinter.Button(self.bottomFrame, text="OK", command=self.showChoice)
+#         self.quitButton= tkinter.Button(self.bottomFrame, text="Quit", command=self.mainWindow.destroy)
+
+#         self.okButton.pack(side="left")
+#         self.quitButton.pack(side="left")
+
+#         self.topFrame.pack()
+#         self.bottomFrame.pack()
+#         tkinter.mainloop()
+
+#     def showChoice(self):
+#         self.message = 'You selected: \n'
+#         if self.cbVar1.get() == 1:
+#             self.message += "Option 1\n"    # met get kun je de waarde van de IntVar ophalen, in dit geval de waarde van de geselecteerde checkboxes
+#         if self.cbVar2.get() == 1:
+#             self.message += "Option 2\n"
+#         if self.cbVar3.get() == 1:
+#             self.message += "Option 3\n"
+#         tkinter.messagebox.showinfo("Selection", self.message) 
+
+# if __name__ == "__main__":
+#     my_gui = myGUI()
+
+########################################################################################################################################################################
+
+# listbox
 
 import tkinter
-import tkinter.messagebox
 
-
-class MyKiloConverterGUI:
+class listBox:
     def __init__(self):
         self.mainWindow = tkinter.Tk()
-        self.topFrame = tkinter.Frame()
-        self.midFrame = tkinter.Frame()  
-        self.bottomFrame = tkinter.Frame()
-        self.promptLabel = tkinter.Label(self.topFrame, text="Enter distance in kilometers:")
-        self.kiloEntry = tkinter.Entry(self.topFrame, width=10)
-        self.calcButton = tkinter.Button(self.bottomFrame, text="Convert", command=self.convert)
-        self.quitButton= tkinter.Button(self.bottomFrame, text="Quit", command=self.mainWindow.destroy)
 
-        self.value= tkinter.StringVar() 
+        self.label = tkinter.Label(self.mainWindow, text="Select a programming language:")
+        self.label.pack(padx = 10, pady = 10)
 
-        self.descriptionLabel = tkinter.Label(self.midFrame, text="Distance in miles:")
-        self.milesLabel = tkinter.Label(self.midFrame, textvariable=self.value)
-        
-        self.descriptionLabel.pack(side="left")
-        self.milesLabel.pack(side="left")  
-        self.calcButton.pack(side="left")
-        self.quitButton.pack(side="left")
-        self.promptLabel.pack(side="left")
-        self.kiloEntry.pack(side="left")
-       
-        self.topFrame.pack(ipadx=10, ipady=10, padx=10, pady=10)
-        self.midFrame.pack(ipadx=10, ipady=10, padx=10, pady=10)
-        self.bottomFrame.pack(  ipadx=10, ipady=10, padx=10, pady=10) 
+        self.bottomframe = tkinter.Frame(self.mainWindow)
+
+        self.listbox = tkinter.Listbox(self.bottomframe)
+        self.listbox.pack(padx = 10, pady = 10 )
+        self.listbox.insert(1, "Python")
+        self.listbox.insert(2, "Java")
+        self.listbox.insert(3, "C++")
+        self.listbox.insert(4, "JavaScript")
+        self.listbox.pack()
+
+        self.bottomframe.pack(padx=10, pady=10, ipadx=10, ipady=10)
 
         tkinter.mainloop()
 
-    def convert(self):
-        kilo = float(self.kiloEntry.get())
-        miles = kilo * 0.6214
-        self.value.set(miles) # je kunt set en get gebruiken om de waarde van een StringVar te veranderen en op te halen, in dit geval zetten we de waarde van miles in de StringVar value, die vervolgens wordt weergegeven in de milesLabel
-
 if __name__ == "__main__":
-    kiloconv = MyKiloConverterGUI()
-
-##############################################################################################
+    my_listbox = listBox()
