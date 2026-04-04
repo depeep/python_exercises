@@ -400,30 +400,88 @@
 
 ########################################################################################################################################################################
 
-# listbox
+# # listbox 13-17
+
+# import tkinter
+
+# class listBox:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+
+#         self.label = tkinter.Label(self.mainWindow, text="Select a programming language:")
+#         self.label.pack(padx = 10, pady = 10)
+
+#         self.bottomframe = tkinter.Frame(self.mainWindow)
+
+#         self.listbox = tkinter.Listbox(self.bottomframe)
+#         self.listbox.pack(padx = 10, pady = 10 )
+#         self.listbox.insert(1, "Python")
+#         self.listbox.insert(2, "Java")
+#         self.listbox.insert(3, "C++")
+#         self.listbox.insert(4, "JavaScript")
+#         self.listbox.pack()
+
+#         self.bottomframe.pack(padx=10, pady=10, ipadx=10, ipady=10)
+
+#         tkinter.mainloop()
+
+# if __name__ == "__main__":
+#     my_listbox = listBox()
+
+########################################################################################################################################################################
+
+# # listbox vullen met een loop 13-18
+
+# import tkinter
+
+# class listBox:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+
+#         self.listbox= tkinter.Listbox(self.mainWindow, height=0, width=20, selectmode=tkinter.BROWSE) # height=0 betekent dat de listbox automatisch de hoogte aanpast aan het aantal items, width geeft de breedte van de listbox aan in aantal tekens
+#         self.listbox.pack(padx=10, pady=10)
+
+#         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+#         for day in days:
+#             self.listbox.insert(tkinter.END, day) # met END voeg je een item toe aan het einde van de lijst, je kunt ook een index gebruiken om een item op een specifieke positie toe te voegen
+
+#         tkinter.mainloop()
+
+# if __name__ == "__main__":
+#     my_listbox = listBox()
+
+
+########################################################################################################################################################################
+
+# # geselecteerde idems in listbox ophalen 13-19
 
 import tkinter
+import tkinter.messagebox
 
-class listBox:
+class listBoxSelection:
     def __init__(self):
-        self.mainWindow = tkinter.Tk()
+        self. mainWindow = tkinter.Tk()
+        self.dogListbox = tkinter.Listbox(self.mainWindow, width= 0 , height=0, selectmode=tkinter.MULTIPLE) # met MULTIPLE kun je meerdere items selecteren, met BROWSE kun je maar één item selecteren
 
-        self.label = tkinter.Label(self.mainWindow, text="Select a programming language:")
-        self.label.pack(padx = 10, pady = 10)
+        dogs = ["Labrador", "Poodle", "Bulldog", "Beagle", "Chihuahua", "Dachshund", "Boxer"]
 
-        self.bottomframe = tkinter.Frame(self.mainWindow)
+        for dog in dogs:
+            self.dogListbox.insert(tkinter.END, dog)
 
-        self.listbox = tkinter.Listbox(self.bottomframe)
-        self.listbox.pack(padx = 10, pady = 10 )
-        self.listbox.insert(1, "Python")
-        self.listbox.insert(2, "Java")
-        self.listbox.insert(3, "C++")
-        self.listbox.insert(4, "JavaScript")
-        self.listbox.pack()
-
-        self.bottomframe.pack(padx=10, pady=10, ipadx=10, ipady=10)
-
+        self.getButton = tkinter.Button (self.mainWindow, text="Get Selection", command=self.retrieveDog)
+        self.dogListbox.pack(padx=10, pady=10)
+        self.getButton.pack(padx=10, pady=10)
         tkinter.mainloop()
 
+    def retrieveDog(self):
+        indexes=self.dogListbox.curselection() # met curselection krijg je een tuple met de indexen van de geselecteerde items
+        if len(indexes) == 0:
+            tkinter.messagebox.showinfo("Selection", "No dog selected.")
+        else:
+            #meer selecteren tegelijk
+            # selectedDogs = [self.dogListbox.get(index) for index in indexes] # met get kun je de waarde van een item op een specifieke index ophalen, in dit geval de geselecteerde items
+            # tkinter.messagebox.showinfo("Selection", "You selected: " + ", ".join(selectedDogs)) # met join kun je een lijst van strings samenvoegen tot één string, in dit geval de geselecteerde items gescheiden door een komma
+            tkinter.messagebox.showinfo(message = self.dogListbox.get(indexes[0])) # als je maar één item wilt ophalen, kun je de eerste index gebruiken, in dit geval de eerste geselecteerde item omdat de selectmode MULTIPLE is, kunnen er meerdere items geselecteerd zijn, maar we laten hier alleen de eerste geselecteerde item zien
+
 if __name__ == "__main__":
-    my_listbox = listBox()
+    my_listbox_selection = listBoxSelection()
