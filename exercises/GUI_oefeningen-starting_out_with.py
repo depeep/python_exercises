@@ -555,19 +555,82 @@
 
 #   draw line 13-24 draw multiple lines13-25
 
+# import tkinter
+
+# class MyGUI:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+#         self.canvas = tkinter.Canvas(self.mainWindow, width = 200, height = 200)
+#         self.canvas.create_line(0,0, 199,199) # met create_line kun je een lijn tekenen op het canvas, de eerste twee parameters zijn de x en y coördinaten van het beginpunt van de lijn, de laatste twee parameters zijn de x en y coördinaten van het eindpunt van de lijn
+#         self.canvas.create_line(199,0, 0, 199)
+#         self.canvas.create_line(0,100, 199,100)
+#         self.canvas.create_line(100,0,100,199)
+#         self.canvas.create_line( 10, 10, 150,150, 160, 20, 20, 20, fill="red" ) # je kunt ook meerdere lijnen tekenen met één create_line, door meerdere coördinaten op te geven, in dit geval worden er drie lijnen getekend, van (10,10) naar (150,150), van (20,20) naar (150,20) en van (150,20) naar (150,150)
+#         self.canvas.pack()
+#         tkinter.mainloop()
+# if __name__ == "__main__":
+#     my_gui = MyGUI()
+
+
+# ########################################################################################################################################################
+
+# drawing rectangles ovals arcs 13-26 - 28
+# import tkinter
+
+# class MyGUI:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+#         self.canvas = tkinter.Canvas(self.mainWindow, width = 200, height = 200)
+#         self.canvas.create_rectangle(10,10, 100,100) # met create_rectangle kun je een rechthoek tekenen op het canvas, de eerste twee parameters zijn de x en y coördinaten van de linkerbovenhoek van de rechthoek, de laatste twee parameters zijn de x en y coördinaten van de rechteronderhoek van de rechthoek
+#         self.canvas.create_rectangle(50,50, 150,150, fill="blue") # met fill kun je de kleur van de rechthoek instellen
+#         self.canvas.create_oval(20,20, 80,80, fill="red") # met create_oval kun je een ovaal tekenen op het canvas, de eerste twee parameters zijn de x en y coördinaten van de linkerbovenhoek van het omhullende rechthoek, de laatste twee parameters zijn de x en y coördinaten van de rechteronderhoek van het omhullende rechthoek
+#         self.canvas.create_oval(120,20, 180,80, fill="green")
+#         self.canvas.create_arc(20,120, 80,180, start=90, extent=150, fill="yellow") 
+#         # met create_arc kun je een boog tekenen op het canvas, de eerste twee parameters zijn de x en y coördinaten van de linkerbovenhoek van het omhullende rechthoek, 
+#         # de laatste twee parameters zijn de x en y coördinaten van de rechteronderhoek van het omhullende rechthoek, start geeft de starthoek aan in graden, extent geeft de hoek aan die de boog beslaat in graden
+
+
+#         self.canvas.pack()
+#         tkinter.mainloop()
+
+# if __name__ == "__main__":
+#     my_gui = MyGUI()    
+
+# ########################################################################################################################################################
+
+# verschillende soorten arcs: PIESLICE, CHORD, ARC met style toevoegen aan create_arc.
+# import tkinter
+
+# class MyGUI:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+#         self.canvas = tkinter.Canvas(self.mainWindow, width = 200, height = 200)
+#         self.canvas.create_arc(20,120, 80,180, start=90, extent=150, fill="yellow", style=tkinter.PIESLICE) 
+#         self.canvas.create_arc(90,120, 150,180, start=90, extent=150, fill="orange", style=tkinter.CHORD) 
+#         self.canvas.create_arc(160,120, 220,180, start=90, extent=150, fill="purple", style=tkinter.ARC) 
+#         self.canvas.pack()
+#         tkinter.mainloop()
+
+# if __name__ == "__main__":
+#     my_gui = MyGUI()    
+
+# ########################################################################################################################################################
+
+# polygon tekenen met create_polygon, de eerste parameters zijn de x en y coördinaten van de punten van de veelhoek, fill geeft de kleur van de veelhoek aan 
+# create tekst met create_text, de eerste twee parameters zijn de x en y coördinaten van het beginpunt van de tekst, de derde parameter is de tekst zelf, fill geeft de kleur van de tekst aan, font geeft het lettertype en de grootte van de tekst aan
+
+#  ziek ook blz 600 van het boek voor meer opties voor create_text.
 import tkinter
 
 class MyGUI:
     def __init__(self):
         self.mainWindow = tkinter.Tk()
         self.canvas = tkinter.Canvas(self.mainWindow, width = 200, height = 200)
-        self.canvas.create_line(0,0, 199,199) # met create_line kun je een lijn tekenen op het canvas, de eerste twee parameters zijn de x en y coördinaten van het beginpunt van de lijn, de laatste twee parameters zijn de x en y coördinaten van het eindpunt van de lijn
-        self.canvas.create_line(199,0, 0, 199)
-        self.canvas.create_line(0,100, 199,100)
-        self.canvas.create_line(100,0,100,199)
+        self.canvas.create_polygon(10,10, 100,10, 50,50, fill="cyan") # met create_polygon kun je een veelhoek tekenen op het canvas, de eerste parameters zijn de x en y coördinaten van de punten van de veelhoek, fill geeft de kleur van de veelhoek aan
+        self.canvas.create_polygon(120,10, 190,10, 190,50, 120,50, fill="magenta")
+        self.canvas.create_text(100,150, text="Hello, World!", fill="black", font=("Arial", 12))
         self.canvas.pack()
         tkinter.mainloop()
+
 if __name__ == "__main__":
     my_gui = MyGUI()
-
-    
