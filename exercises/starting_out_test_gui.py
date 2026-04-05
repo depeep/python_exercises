@@ -455,33 +455,119 @@
 
 # # geselecteerde idems in listbox ophalen 13-19
 
+# import tkinter
+# import tkinter.messagebox
+
+# class listBoxSelection:
+#     def __init__(self):
+#         self. mainWindow = tkinter.Tk()
+#         self.dogListbox = tkinter.Listbox(self.mainWindow, width= 0 , height=0, selectmode=tkinter.MULTIPLE) # met MULTIPLE kun je meerdere items selecteren, met BROWSE kun je maar één item selecteren
+
+#         dogs = ["Labrador", "Poodle", "Bulldog", "Beagle", "Chihuahua", "Dachshund", "Boxer"]
+
+#         for dog in dogs:
+#             self.dogListbox.insert(tkinter.END, dog)
+
+#         self.getButton = tkinter.Button (self.mainWindow, text="Get Selection", command=self.retrieveDog)
+#         self.dogListbox.pack(padx=10, pady=10)
+#         self.getButton.pack(padx=10, pady=10)
+#         tkinter.mainloop()
+
+#     def retrieveDog(self):
+#         indexes=self.dogListbox.curselection() # met curselection krijg je een tuple met de indexen van de geselecteerde items
+#         if len(indexes) == 0:
+#             tkinter.messagebox.showinfo("Selection", "No dog selected.")
+#         else:
+#             #meer selecteren tegelijk
+#             selectedDogs = [self.dogListbox.get(index) for index in indexes] # met get kun je de waarde van een item op een specifieke index ophalen, in dit geval de geselecteerde items
+#             tkinter.messagebox.showinfo("Selection", "You selected: " + ", ".join(selectedDogs)) # met join kun je een lijst van strings samenvoegen tot één string, in dit geval de geselecteerde items gescheiden door een komma
+#             # tkinter.messagebox.showinfo(message = self.dogListbox.get(indexes[0])) # als je maar één item wilt ophalen, kun je de eerste index gebruiken, in dit geval de eerste geselecteerde item omdat de selectmode MULTIPLE is, kunnen er meerdere items geselecteerd zijn, maar we laten hier alleen de eerste geselecteerde item zien
+
+# if __name__ == "__main__":
+#     my_listbox_selection = listBoxSelection()
+
+# ###############################################################################################################################
+
+# # 13-21 Vertical scrollbar toevoegen aan listbox
+
+# import tkinter
+
+# class VerticalScrollbar:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+
+#         self.listboxFrame = tkinter.Frame(self.mainWindow)
+#         self.listboxFrame.pack(padx=20, pady=20)
+
+#         self.listbox = tkinter.Listbox(self.listboxFrame, height=6, width=0)
+#         self.listbox.pack(side="left", padx=10, pady=10)
+
+#         self.scrollbar = tkinter.Scrollbar(self.listboxFrame, orient=tkinter.VERTICAL)
+#         self.scrollbar.pack(side='right', fill=tkinter.Y)
+
+#         # verbind de scrollbar met de listbox
+#         self.scrollbar.config(command=self.listbox.yview) # met config kun je de eigenschappen van een widget aanpassen, in dit geval de command van de scrollbar, zodat de scrollbar de yview van de listbox aanpast, waardoor de listbox scrollt als je aan de scrollbar trekt
+#         self.listbox.config(yscrollcommand=self.scrollbar.set) # met config kun je de eigenschappen van een widget aanpassen, in dit geval de yscrollcommand van de listbox, zodat de listbox de set van de scrollbar aanpast, waardoor de scrollbar de positie van de listbox bijhoudt als je aan de scrollbar trekt
+
+#         months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+#         for month in months:
+#             self.listbox.insert(tkinter.END, month) 
+        
+#         tkinter.mainloop()
+
+# if __name__ == "__main__":
+#     my_vertical_scrollbar = VerticalScrollbar()
+
+
+# ###############################################################################################################################
+
+# 13-22 Horizontal scrollbar toevoegen aan listbox
+
+# import tkinter
+
+# class HorizontalScrollbar:
+#     def __init__(self):
+#         self.mainWindow = tkinter.Tk()
+
+#         self.listboxFrame = tkinter.Frame(self.mainWindow)
+#         self.listboxFrame.pack(padx=20, pady=20)
+
+#         self.listbox = tkinter.Listbox(self.listboxFrame, height=5, width=30)
+#         self.listbox.pack(side="top", padx=10, pady=10)
+
+#         self.scrollbar = tkinter.Scrollbar(self.listboxFrame, orient=tkinter.HORIZONTAL)
+#         self.scrollbar.pack(side='bottom', fill=tkinter.X)
+
+#         # verbind de scrollbar met de listbox
+#         self.scrollbar.config(command=self.listbox.xview) # met config kun je de eigenschappen van een widget aanpassen, in dit geval de command van de scrollbar, zodat de scrollbar de xview van de listbox aanpast, waardoor de listbox horizontaal scrollt als je aan de scrollbar trekt
+#         self.listbox.config(xscrollcommand=self.scrollbar.set) # met config kun je de eigenschappen van een widget aanpassen, in dit geval de xscrollcommand van de listbox, zodat de listbox de set van de scrollbar aanpast, waardoor de scrollbar de positie van de listbox bijhoudt als je aan de scrollbar trekt
+
+#         long_items = ["This is a long item that will require horizontal scrolling", "Another long item that will require horizontal scrolling", "Yet another long item that will require horizontal scrolling"]
+#         for item in long_items:
+#             self.listbox.insert(tkinter.END, item) 
+        
+#         tkinter.mainloop()
+
+# if __name__ == "__main__":
+#     my_horizontal_scrollbar = HorizontalScrollbar()
+
+# ########################################################################################################################################################
+
+#   draw line 13-24 draw multiple lines13-25
+
 import tkinter
-import tkinter.messagebox
 
-class listBoxSelection:
+class MyGUI:
     def __init__(self):
-        self. mainWindow = tkinter.Tk()
-        self.dogListbox = tkinter.Listbox(self.mainWindow, width= 0 , height=0, selectmode=tkinter.MULTIPLE) # met MULTIPLE kun je meerdere items selecteren, met BROWSE kun je maar één item selecteren
-
-        dogs = ["Labrador", "Poodle", "Bulldog", "Beagle", "Chihuahua", "Dachshund", "Boxer"]
-
-        for dog in dogs:
-            self.dogListbox.insert(tkinter.END, dog)
-
-        self.getButton = tkinter.Button (self.mainWindow, text="Get Selection", command=self.retrieveDog)
-        self.dogListbox.pack(padx=10, pady=10)
-        self.getButton.pack(padx=10, pady=10)
+        self.mainWindow = tkinter.Tk()
+        self.canvas = tkinter.Canvas(self.mainWindow, width = 200, height = 200)
+        self.canvas.create_line(0,0, 199,199) # met create_line kun je een lijn tekenen op het canvas, de eerste twee parameters zijn de x en y coördinaten van het beginpunt van de lijn, de laatste twee parameters zijn de x en y coördinaten van het eindpunt van de lijn
+        self.canvas.create_line(199,0, 0, 199)
+        self.canvas.create_line(0,100, 199,100)
+        self.canvas.create_line(100,0,100,199)
+        self.canvas.pack()
         tkinter.mainloop()
-
-    def retrieveDog(self):
-        indexes=self.dogListbox.curselection() # met curselection krijg je een tuple met de indexen van de geselecteerde items
-        if len(indexes) == 0:
-            tkinter.messagebox.showinfo("Selection", "No dog selected.")
-        else:
-            #meer selecteren tegelijk
-            # selectedDogs = [self.dogListbox.get(index) for index in indexes] # met get kun je de waarde van een item op een specifieke index ophalen, in dit geval de geselecteerde items
-            # tkinter.messagebox.showinfo("Selection", "You selected: " + ", ".join(selectedDogs)) # met join kun je een lijst van strings samenvoegen tot één string, in dit geval de geselecteerde items gescheiden door een komma
-            tkinter.messagebox.showinfo(message = self.dogListbox.get(indexes[0])) # als je maar één item wilt ophalen, kun je de eerste index gebruiken, in dit geval de eerste geselecteerde item omdat de selectmode MULTIPLE is, kunnen er meerdere items geselecteerd zijn, maar we laten hier alleen de eerste geselecteerde item zien
-
 if __name__ == "__main__":
-    my_listbox_selection = listBoxSelection()
+    my_gui = MyGUI()
+
+    
