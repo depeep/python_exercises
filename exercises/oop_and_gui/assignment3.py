@@ -74,7 +74,7 @@ class MemoryTestWindow:
         groenVierkant.show()
         geelVierkant.show()
         self.canvas.update()  # Update the canvas to show the new rectangles
-        return [blauwVierkant, roodVierkant, groenVierkant, geelVierkant]
+        return [roodVierkant, blauwVierkant, groenVierkant, geelVierkant]
 
     def runObservationPhase(self, vierkanten):
         # testen
