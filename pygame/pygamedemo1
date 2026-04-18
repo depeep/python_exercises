@@ -1,0 +1,64 @@
+import pygame
+import random
+
+
+pygame.init()
+red= (255, 0, 0)
+white = (255, 255, 255) 
+black = (0, 0, 0)
+green = (0, 255, 0) 
+orange = (255, 165, 0)  
+blue = (0, 0, 255)
+pink = (255, 192, 203)
+yellow = (255, 255, 0)
+
+
+size = (800, 600)
+
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Jos's demo1")
+screen.fill(white)
+
+colors = [red, green, orange, blue, pink, yellow]
+for i in range(10):
+    color = random.choice(colors)
+    x = random.randint(0, size[0])
+    y = random.randint(0, size[1])
+    radius = random.randint(10, 50)
+    pygame.draw.circle(screen, color, (x, y), radius)
+    pygame.display.flip()
+    wait_time = random.randint(0, 1000)  # wacht tussen 0.5 en 1.5 seconden
+    pygame.time.delay(wait_time)  # wacht de gegenereerde tijd voordat de volgende cir
+
+for i in range(10):
+    color = random.choice(colors)
+    x = random.randint(0, size[0])
+    y = random.randint(0, size[1])
+    width = random.randint(20, 100)
+    height = random.randint(20, 100)
+    pygame.draw.rect(screen, color, (x, y, width, height))
+    pygame.display.flip()  
+    wait_time = random.randint(0, 1000)  # wacht tussen 0.5 en 1.5 seconden
+    pygame.time.delay(wait_time)  # wacht de gegenereerde tijd voordat de volgende cir
+
+for i in range(10):
+    color = random.choice(colors)
+    x1 = random.randint(0, size[0])
+    y1 = random.randint(0, size[1])
+    x2 = random.randint(0, size[0])
+    y2 = random.randint(0, size[1])
+    width = random.randint(1, 5)
+    pygame.draw.line(screen, color, (x1, y1), (x2, y2), width)  
+    wait_time = random.randint(0, 1000)  # wacht tussen 0.5 en 1.5 seconden
+    pygame.time.delay(wait_time)  # wacht de gegenereerde tijd voordat de volgende cir
+    pygame.display.flip()  
+
+
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+pygame.quit()

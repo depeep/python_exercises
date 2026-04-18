@@ -1,0 +1,24 @@
+import pygame
+pygame.init()
+
+red= (255, 0, 0)
+white = (255, 255, 255)
+black = (0, 0, 0)
+size = (800, 600)
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Jos's game1")
+
+
+screen.fill(white)
+pygame.draw.line(screen, red, (0, 0), (800, 600), 5)
+pygame.draw.line(screen, red, (0, 600), (800, 0), 5)
+pygame.draw.circle(screen, red, (400, 300), 50) 
+
+pygame.display.flip()
+
+done = False    
+while not done:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+pygame.quit()
