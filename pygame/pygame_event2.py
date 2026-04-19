@@ -110,12 +110,12 @@ class TreatHunt:
         self.surface = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Corgi's cookie chasing adventure")
 
-        # ✅ assets 1x laden
+        # assets 1x laden
         backgroundImage = pygame.image.load("background.png").convert()
         self.corgiImage = pygame.image.load("corgi1.png").convert_alpha()
         self.singleTreatImage = pygame.image.load("singletreatsmall.png").convert_alpha()
 
-        # ✅ sprites 1x maken
+        # sprites 1x maken
         self.backgroundSprite = Sprite(backgroundImage, self)
         self.corgiSprite = Corgi(self.corgiImage, self)
         self.singleTreatSprite = SingleTreat(self.singleTreatImage, self)
