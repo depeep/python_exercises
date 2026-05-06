@@ -1,5 +1,8 @@
 # Memory Test Game
-# Functioneel tot en met opdracht 7 (levels toegevoegd)
+# Functioneel tot en met opdracht 8 (levels toegevoegd, schaalbaar gemaakt)
+# NB geel is superhinderlijk bij grotere aantallen, daar is één kleur eigenlijk veel makkelijker. Wat ik zelf ook nog irritant vind is bij ieder level een nieuwe kleuren layout, misschien de kleurdoos eerder aan laten maken, bijvoorbeeld na aanklikken start.
+# TODO: losse functies waar code te uitgebreid is (startTest!!!), netjes opsplitsen in meerdere bestanden. Parameters als dimensie en sequenceLength netjes bij elkaar. DRYer maken. Eventueel een knopje of keuzelijstje erbij voor de dimensies. Tekst onderaan nog mee laten gaan met dimensies enz.
+# klassendiagrammen enz reverse engineeren + pytest testbestanden aanmaken
 
 import tkinter
 import random
@@ -40,6 +43,10 @@ class MemoryTestWindow:
         self.sequenceLengthLabel.pack(side='left', pady=20)  
         self.sequenceLengthValueLabel = tkinter.Label(self.bottomframe, text="1", font =basisLettertype ) 
         self.sequenceLengthValueLabel.pack(side='left', pady=20)
+        self.sequenceSizeLabel = tkinter.Label(self.bottomframe, text="Size", font =basisLettertype ) 
+        self.sequenceSizeLabel.pack(side='left', pady=20)
+        self.sequenceSizeValueLabel = tkinter.Label(self.bottomframe, text="2 X 2", font =basisLettertype ) 
+        self.sequenceSizeValueLabel.pack(side='left', pady=20)
 
         self.canvas = tkinter.Canvas(self.middleframe, width = 1200, height = 700)     #niet de lekkerste maten om netjes te verdelen  TODO: aanpassen, misschien in de vulling
         self.canvas.config(bg="white")
@@ -50,10 +57,10 @@ class MemoryTestWindow:
     
     def startTest(self):
         self.countDown(3)  #tijd meegeven voor de countdown, nu 3 seconden
-        maxLevels = 12 #aantal levels, nu 12 
+        maxLevels = 12 #aantal levels, nu 12  
         timeVisible=500
         timeBetween = 500
-        for level in range (maxLevels):  #aantal rondes, nu 4 maar dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
+        for level in range (maxLevels): 
             vierkanten = self.prepareObservationPhase() # prepareObservationPhase() returnt de vierkanten zodat ze kunnen worden gebruikt in runObservationPhase() om ze te verbergen/tonen
             getoondeReeks =self.runObservationPhase(vierkanten, level+1, timeVisible, timeBetween) # runObservationPhase() returnt de getoondeReeks zodat deze kan worden vergeleken met de userSequence in checkUserResponse(), parameters voor lengte van de sequence en tijd dat de vakken zichtbaar zijn en tijd tussen het tonen van de vakken, nu hardcoded maar dit kan worden aangepast naar variabelen die worden ingesteld in de GUI
             userSequence =self.userResponsePhase(vierkanten, level+1) # userResponsePhase() returnt de userSequence zodat deze kan worden vergeleken met de getoondeReeks in checkUserResponse(), parameter voor lengte van de sequence, nu hardcoded maar dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
@@ -74,29 +81,41 @@ class MemoryTestWindow:
             self.statusInfoLabel.update() 
             self.statusInfoLabel.after(1000) 
 
+
+# NEW schaalbaar gemaakt TODO kleur ophalen in bepaalKleur uitwerken en dimensies (size) als argument/parameter toevoegen
     def prepareObservationPhase(self):
         self.canvas.delete("all")  # Canvas leegmaken voordat de vierkanten worden getoond, zodat er geen oude vierkanten blijven staan als de test opnieuw wordt gestart
         self.statusInfoLabel.config(text="Get ready!") 
-        roodVierkant =  Vierkant(self.canvas, 300, 25, "red", 300)  # kan nog verder worden geparametriseerd zodat het makkelijker is om de grootte en positie van de vakken aan te passen
-        blauwVierkant = Vierkant(self.canvas, 625, 25, "blue", 300)
-        groenVierkant = Vierkant(self.canvas, 300, 375, "green", 300)
-        geelVierkant = Vierkant(self.canvas, 625, 375, "yellow", 300)
-        roodVierkant.show() 
-        blauwVierkant.show()
-        groenVierkant.show()
-        geelVierkant.show()
-        self.canvas.update()  #bijwerken om de vierkanten te laten zien
-        return [roodVierkant, blauwVierkant, groenVierkant, geelVierkant]
+        size= 10 #dimensies
+        aantalVierkanten = size*size
+        zijde = 600/size
+        vierkanten = []
+        kleurdoos= vulKleurdoos(aantalVierkanten)
+        kleurnummer = 0
+        for horizontaal in range (size):
+            for verticaal in range (size):
+                kleur = kleurdoos[kleurnummer]
+                x= 300 + zijde *horizontaal
+                y= 50 + zijde * verticaal
+                vierkant = Vierkant(self.canvas, x, y, kleur, zijde -10)
+                vierkant.show()
+                vierkanten.append(vierkant)
+                kleurnummer += 1
+        self.canvas.update()  #bijwerken om de vierkanten te laten zien   
+        return vierkanten
+        
 
-#   NEW schaalbaar gemaakt voor meerdere levels en tijd  toegevoegd als parameters)
+
+#   NEW schaalbaar gemaakt voor meerdere levels en tijd  toegevoegd als parameters
     def runObservationPhase(self, vierkanten, sequenceLength, timeVisible, timeBetween):
         getoondeReeks =[]
         self.statusInfoLabel.config(text="Get ready for level: " + str(sequenceLength))  
         self.sequenceLengthValueLabel.config(text = str(sequenceLength))
         self.canvas.update()
         self.canvas.after(1000)  
+        aantalNummers = (len(vierkanten)-1)
         for i in range(sequenceLength):  
-            nummer = random.randint(0, 3)  #  random index voor de vierkanten, kan worden aangepast naar een variabele die het aantal vierkanten aangeeft, nu hardcoded op 4
+            nummer = random.randint(0, aantalNummers)  #  random index voor de vierkanten, kan worden aangepast naar een variabele die het aantal vierkanten aangeeft, nu hardcoded op 4
             getoondeReeks.append(nummer)
             self.canvas.after(timeVisible)  # wacht 500ms
             vierkanten[nummer].hide()
@@ -145,7 +164,56 @@ class MemoryTestWindow:
         self.canvas.update()  
         # self.statusInfoLabel.config(text="Current user sequence: " + str(userSequence))  # Update the status label to show the current user sequence, TODO: update this message to be more user-friendly
         return userSequence     
- 
+
+# NIEUW kleurdoos aanmaken
+def vulKleurdoos(aantalVierkanten): # functie om de kleur te bepalen, nog dimensies toevoegen voor de kleur spelregels
+    grens = aantalVierkanten//4
+    extra = aantalVierkanten % 4
+    kleurdoos = []
+    aantalRood = 0
+    aantalBlauw = 0
+    aantalGroen = 0 
+    aantalGeel =0
+    aantalKleuren = 0
+    # print (aantalKleuren)
+    while (aantalKleuren < grens*4):
+        nummer = random.randint(0, 4)
+        if (nummer == 0 and aantalRood < grens):
+            kleurdoos.append('red')
+            # print ("rood")
+            aantalRood +=1
+            aantalKleuren +=1
+        elif (nummer == 1 and aantalGroen < grens):
+            kleurdoos.append('green')
+            # print ("groen")
+            aantalGroen +=1
+            aantalKleuren +=1
+        elif (nummer == 2 and aantalBlauw < grens):
+            kleurdoos.append('blue')
+            # print ("blauw")
+            aantalBlauw +=1
+            aantalKleuren +=1
+        elif (nummer == 3 and aantalGeel < grens):
+            # print ("geel")
+            kleurdoos.append('yellow')
+            aantalGeel +=1
+            aantalKleuren +=1
+  
+    if extra == 1:
+        kleurdoos.append('blue')
+    # print (kleurdoos)
+    return kleurdoos
+    
+
+        
+
+
+
+
+
+
+
+
 
 class Vierkant:
     def __init__(self, canvas, x1, y1, color, zijdeLengte):
