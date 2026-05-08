@@ -204,17 +204,6 @@ def vulKleurdoos(aantalVierkanten): # functie om de kleur te bepalen, nog dimens
     # print (kleurdoos)
     return kleurdoos
     
-
-        
-
-
-
-
-
-
-
-
-
 class Vierkant:
     def __init__(self, canvas, x1, y1, color, zijdeLengte):
         self.canvas = canvas
