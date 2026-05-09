@@ -33,3 +33,5 @@ def vulKleurdoos(aantalVierkanten): # functie om de kleur te bepalen, nog dimens
     if extra == 1:
         kleurdoos.append('blue')
     return kleurdoos
+
+

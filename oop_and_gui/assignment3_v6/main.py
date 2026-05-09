@@ -16,7 +16,7 @@ import tkinter
 import random
 import config
 import vormen
-from kleurdoos import  vulKleurdoos
+from kleurdoos import  vulKleurdoos, countDown
 
 config = config.Config()
 
