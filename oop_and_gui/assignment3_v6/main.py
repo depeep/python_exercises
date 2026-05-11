@@ -13,10 +13,10 @@
 # pytest testbestanden aanmaken TODO
   
 import tkinter
-import random
+import random 
 import config
 import vormen
-from kleurdoos import  vulKleurdoos, countDown
+from kleurdoos import  vulKleurdoos
 
 config = config.Config()
 
@@ -72,9 +72,9 @@ class MemoryTestWindow:
     def runTest(self):
         size = config.getSize()
         kleurdoos= vulKleurdoos(size*size)
-        self.countDown(3)  #tijd meegeven voor de countdown, nu 3 seconden
+        self.countDown(3)  #tijd meegeven voor de countdown, nu 3 seconden TODO naar config.py
         maxLevels, timeVisible, timeBetween = config.getStartTestSettings()
-        for level in range (maxLevels): 
+        for level in range (maxLevels): # TODO naar aparte functie?
             vierkanten = self.prepareObservationPhase(kleurdoos) # prepareObservationPhase() returnt de vierkanten zodat ze kunnen worden gebruikt in runObservationPhase() om ze te verbergen/tonen
             getoondeReeks =self.runObservationPhase(vierkanten, level+1, timeVisible, timeBetween) # runObservationPhase() returnt de getoondeReeks zodat deze kan worden vergeleken met de userSequence in checkUserResponse(), parameters voor lengte van de sequence en tijd dat de vakken zichtbaar zijn en tijd tussen het tonen van de vakken, nu hardcoded maar dit kan worden aangepast naar variabelen die worden ingesteld in de GUI
             userSequence =self.userResponsePhase(vierkanten, level+1) # userResponsePhase() returnt de userSequence zodat deze kan worden vergeleken met de getoondeReeks in checkUserResponse(), parameter voor lengte van de sequence, nu hardcoded maar dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
@@ -95,12 +95,13 @@ class MemoryTestWindow:
             self.statusInfoLabel.update() 
             self.statusInfoLabel.after(1000) 
 
-# NEW schaalbaar gemaakt TODO kleur ophalen in bepaalKleur uitwerken en dimensies (size) als argument/parameter toevoegen
+# NEW schaalbaar gemaakt, TODO eventueel verder parametriseren van de getallen en die in de config.py module
+# stoppen met formules die het geheel passend houden bij andere dimensies van het venster en het canvas. 
     def prepareObservationPhase(self, kleurdoos):
         self.canvas.delete("all")  # Canvas leegmaken voordat de vierkanten worden getoond, zodat er geen oude vierkanten blijven staan als de test opnieuw wordt gestart
         self.statusInfoLabel.config(text="Get ready!") 
         size= config.getSize()
-        aantalVierkanten = size*size
+        # aantalVierkanten = size*size
         zijde = 600/size
         vierkanten = []
         # kleurdoos= vulKleurdoos(aantalVierkanten)
@@ -115,7 +116,7 @@ class MemoryTestWindow:
                 vierkanten.append(vierkant)
                 kleurnummer += 1
         self.canvas.update()  #bijwerken om de vierkanten te laten zien  
-        print (vierkanten) 
+        # print (vierkanten) 
         return vierkanten
 
 #   NEW schaalbaar gemaakt voor meerdere levels en tijd  toegevoegd als parameters
@@ -167,7 +168,7 @@ class MemoryTestWindow:
         return userSequence     
 
     
-# class Vierkant: >> verplaatst naar eigen module "vormen"
+# class Vierkant: >> verplaatst naar module "vormen"
 #     def __init__(self, canvas, x1, y1, color, zijdeLengte):
 #         self.canvas = canvas
 #         self.x1 = x1
