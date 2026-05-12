@@ -6,7 +6,7 @@
 # TODO: 
 # losse functies waar code te uitgebreid is (startTest!!!), netjes opsplitsen in meerdere bestanden. >> DONEan
 # Parameters als dimensie en sequenceLength netjes bij elkaar. >> in config>> DONE
-# DRYer maken. >> DONE  
+# DRYer maken. >> DONE, functies als BlinkSquare() en handleSquareClick() maken het geheel al een stuk DRYer, maar er is nog steeds wat herhaling in de code, bijvoorbeeld in prepareObservationPhase() en userResponsePhase(), dit kan worden verbeterd door meer functies te maken die specifieke taken uitvoeren, zoals het tonen van de vierkanten, het verbergen van de vierkanten, het bijwerken van de statuslabel, etc.  
 # Eventueel een knopje of keuzelijstje erbij voor de dimensies. TODO nice to have
 # Tekst onderaan nog mee laten gaan met dimensies enz.>> DONE 
 # klassendiagrammen enz reverse engineeren TODO
@@ -130,14 +130,17 @@ class MemoryTestWindow:
         for i in range(sequenceLength):  
             nummer = random.randint(0, aantalNummers)  
             getoondeReeks.append(nummer)
-            self.canvas.after(timeVisible)  
-            vierkanten[nummer].hide()
-            self.canvas.update()  
-            self.canvas.after(timeBetween)  
-            vierkanten[nummer].show()
-            self.canvas.update()  
+            self.BlinkSquare(vierkanten, nummer, timeVisible)
+            self.canvas.after(timeBetween)
         return getoondeReeks
     
+    def BlinkSquare(self, vierkanten, nummer, timeVisible):
+        vierkanten[nummer].hide()
+        self.canvas.update()  
+        self.canvas.after(timeVisible)  
+        vierkanten[nummer].show()
+        self.canvas.update()
+        
 
     def userResponsePhase(self, vierkanten, sequenceLength):
         self.statusInfoLabel.config(text="Repeat the sequence by clicking the squares in the correct order!")
@@ -160,11 +163,7 @@ class MemoryTestWindow:
    
     def handleSquareClick(self, vierkanten, nummer, userSequence):
         userSequence.append(nummer)
-        vierkanten[nummer].hide()  
-        self.canvas.update()  
-        self.canvas.after(500) 
-        vierkanten[nummer].show()
-        self.canvas.update()  
+        self.BlinkSquare(vierkanten, nummer, 500) # tijd dat het vakje knippert als de gebruiker erop klikt, nu hardcoded op 500ms maar dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
         return userSequence     
 
     
