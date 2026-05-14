@@ -1,0 +1,7 @@
+{
+    "python.testing.pytestArgs": [
+        "oop_and_gui"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}
