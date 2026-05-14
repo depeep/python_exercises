@@ -1,0 +1,90 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' =========================
+' MODULE: main (GUI + controller)
+' =========================
+class MemoryTestWindow {
+  - mainWindow : tkinter.Tk
+  - topframe : tkinter.Frame
+  - middleframe : tkinter.Frame
+  - bottomframe : tkinter.Frame
+
+  - statusInfoLabel : tkinter.Label
+  - StartButton : tkinter.Button
+  - canvas : tkinter.Canvas
+
+  + __init__() : void
+  + runTest() : void
+  + countDown(time:int) : void
+
+  + prepareObservationPhase(kleurdoos) : List<Vierkant>
+  + runObservationPhase(vierkanten, seqLen:int, timeVisible:int, timeBetween:int) : List<int>
+  + userResponsePhase(vierkanten, seqLen:int) : List<int>
+  + checkUserResponse(userSequence, getoondeReeks) : bool
+}
+
+' =========================
+' MODULE: vormen.py
+' =========================
+class Vierkant {
+  - canvas : tkinter.Canvas
+  - x1 : int
+  - y1 : int
+  - x2 : int
+  - y2 : int
+  - color : String
+
+  + __init__(canvas, x1:int, y1:int, color:String, zijdeLengte:int)
+  + show() : void
+  + hide() : void
+}
+
+' =========================
+' MODULE: kleurdoos.py
+' =========================
+class Kleurdoos {
+  - vierkanten : List<Vierkant>
+
+  + __init__(aantal:int)
+  + getVierkanten() : List<Vierkant>
+}
+
+' =========================
+' MODULE: config.py
+' =========================
+class config <<module>> {
+  + getWindowConfig()
+  + getStartTestSettings()
+  + getSize()
+}
+
+' =========================
+' TKINTER (vereenvoudigd)
+' =========================
+class "tkinter.Canvas" as Canvas
+class "tkinter.Tk" as Tk
+
+' =========================
+' RELATIES
+' =========================
+
+' GUI maakt en gebruikt canvas
+MemoryTestWindow *-- Canvas
+
+' GUI gebruikt kleurdoos
+MemoryTestWindow --> Kleurdoos : gebruikt
+
+' GUI gebruikt vierkanten (via kleurdoos)
+MemoryTestWindow --> "0..*" Vierkant : gebruikt
+
+' Kleurdoos bevat vierkanten
+Kleurdoos *-- "1..*" Vierkant : bevat
+
+' Vierkant tekent op canvas
+Vierkant --> Canvas : gebruikt
+
+' Config dependency
+MemoryTestWindow ..> config : haalt instellingen
+
+@enduml

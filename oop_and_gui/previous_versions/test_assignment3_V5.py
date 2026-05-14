@@ -1,4 +1,4 @@
-from assignment3_v5 import *
+from oop_and_gui.previous_versions.assignment3_v5 import *
 import pytest
 
 
