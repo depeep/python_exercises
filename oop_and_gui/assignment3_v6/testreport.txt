@@ -1,0 +1,25 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.0.3, pluggy-1.6.0 -- c:\Users\josvp\OneDrive\studie fontys\SEMESTER2\python\code\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\josvp\OneDrive\studie fontys\SEMESTER2\python\code\oop_and_gui\assignment3_v6
+plugins: cov-7.1.0
+collecting ... collected 16 items
+
+test_main.py::test_checkUserResponse PASSED                              [  6%]
+tests/test_config.py::test_get_start_test_settings_returns_tuple PASSED  [ 12%]
+tests/test_config.py::test_get_window_config_returns_expected_shapes PASSED [ 18%]
+tests/test_config.py::test_get_and_set_size PASSED                       [ 25%]
+tests/test_memorytestwindow_methods.py::test_countdown_updates_label_and_waits PASSED [ 31%]
+tests/test_memorytestwindow_methods.py::test_prepare_observation_phase_creates_correct_number_of_squares PASSED [ 37%]
+tests/test_memorytestwindow_methods.py::test_run_observation_phase_returns_deterministic_sequence PASSED [ 43%]
+tests/test_memorytestwindow_methods.py::test_blink_square_hides_then_shows PASSED [ 50%]
+tests/test_memorytestwindow_methods.py::test_check_user_response_true_calls_after PASSED [ 56%]
+tests/test_memorytestwindow_methods.py::test_check_user_response_false PASSED [ 62%]
+tests/test_memorytestwindow_methods.py::test_handle_square_click_appends_and_blinks PASSED [ 68%]
+tests/test_memorytestwindow_methods.py::test_user_response_phase_binds_clicks_and_lambda_captures_correct_index PASSED [ 75%]
+tests/test_runTest_integration.py::test_runTest_integration_all_levels_correct PASSED [ 81%]
+tests/test_runTest_integration.py::test_runTest_integration_stops_on_incorrect PASSED [ 87%]
+tests/test_vormen.py::test_vierkant_show_draws_colored_rectangle PASSED  [ 93%]
+tests/test_vormen.py::test_vierkant_hide_draws_white_rectangle PASSED    [100%]
+
+============================= 16 passed in 3.44s ==============================

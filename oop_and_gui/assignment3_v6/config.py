@@ -1,3 +1,7 @@
+'''Zoveel mogelijk variabelen in deze module zetten die betrekking hebben op de instellingen van de test, zodat ze makkelijk aan te passen zijn zonder dat je door de hele code hoeft te zoeken.
+TODO Nice to have: misschien sommige van deze variabelen laten aanpassen via de GUI, 
+zoals de grootte van het raster, de tijd dat de vierkanten zichtbaar zijn, etc. Dan methoden  toevoegen aan deze Config klasse om die variabelen aan te passen en op te halen.'''
+
 class Config: 
     def __init__(self):  
         # show and click  

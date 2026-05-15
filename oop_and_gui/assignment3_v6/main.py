@@ -1,17 +1,18 @@
-# Memory Test Game
-# Functioneel tot en met opdracht 8 (levels toegevoegd, schaalbaar gemaakt)
-# NB geel is superhinderlijk bij grotere aantallen, daar is één kleur eigenlijk veel makkelijker. 
-# Wat ik zelf ook nog irritant vind is bij ieder level een nieuwe kleuren layout,
-# misschien de kleurdoos eerder aan laten maken, bijvoorbeeld na aanklikken start.>> DONE
-# TODO: 
-# losse functies waar code te uitgebreid is (startTest!!!), netjes opsplitsen in meerdere bestanden. >> DONEan
-# Parameters als dimensie en sequenceLength netjes bij elkaar. >> in config>> DONE
-# DRYer maken. >> DONE, functies als BlinkSquare() en handleSquareClick() maken het geheel al een stuk DRYer, maar er is nog steeds wat herhaling in de code, bijvoorbeeld in prepareObservationPhase() en userResponsePhase(), dit kan worden verbeterd door meer functies te maken die specifieke taken uitvoeren, zoals het tonen van de vierkanten, het verbergen van de vierkanten, het bijwerken van de statuslabel, etc.  
-# Eventueel een knopje of keuzelijstje erbij voor de dimensies. TODO nice to have
-# Tekst onderaan nog mee laten gaan met dimensies enz.>> DONE 
-# klassendiagrammen enz reverse engineeren TODO
-# pytest testbestanden aanmaken TODO
-  
+''' Memory Test Game
+versie 6, 2026-05-15
+Functioneel tot en met opdracht 8 (levels toegevoegd, schaalbaar gemaakt)
+NB geel is superhinderlijk bij grotere aantallen, daar is één kleur eigenlijk veel makkelijker. 
+Wat ik zelf ook nog irritant vind is bij ieder level een nieuwe kleuren layout => de kleurdoos eerder aan laten maken, bijvoorbeeld na aanklikken start.>> DONE
+losse functies waar code te uitgebreid is (startTest!!!), netjes opsplitsen in meerdere bestanden. >> DONEan
+Parameters als dimensie en sequenceLength netjes bij elkaar. >> in config>> DONE
+DRYer maken. >> DONE, functies als BlinkSquare() en handleSquareClick() maken het geheel al een stuk DRYer, maar er is nog steeds wat herhaling in de code, bijvoorbeeld in prepareObservationPhase() en userResponsePhase(), dit kan worden verbeterd door meer functies te maken die specifieke taken uitvoeren, zoals het tonen van de vierkanten, het verbergen van de vierkanten, het bijwerken van de statuslabel, etc.  
+Eventueel een knopje of keuzelijstje erbij voor de dimensies. TODO nice to have
+Tekst onderaan nog mee laten gaan met dimensies enz.>> DONE 
+klassendiagrammen enz reverse engineeren DONE
+pytest testbestanden aanmaken DONE, maar nog beperkt, alleen checkUserResponse() met de hand geschreven. 
+de directory test bevat voorbeelden van uitgebreidere tests die door AI gegenereerd zijn op basis van de code in de modules, klassen en methoden
+'''
+
 import tkinter
 import random 
 import config
@@ -80,12 +81,12 @@ class MemoryTestWindow:
             userSequence =self.userResponsePhase(vierkanten, level+1) # userResponsePhase() returnt de userSequence zodat deze kan worden vergeleken met de getoondeReeks in checkUserResponse(), parameter voor lengte van de sequence, nu hardcoded maar dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
             result =self.checkUserResponse(userSequence, getoondeReeks)  
             if result == True:
-                self.statusInfoLabel.config(text="Correct!")  # Update the status label to inform the user that they were correct and to get ready for the next level
+                self.statusInfoLabel.config(text="Correct!")  
                 self.canvas.update()
-                self.canvas.after(1000)  # wacht 2 seconden voordat het volgende level begint, zodat de gebruiker tijd heeft om zich voor te bereiden, dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
+                self.canvas.after(1000)  # geeft gebruiker tijd heeft om zich voor te bereiden (=>variabele van maken in config of GUI?)
             else:
-                self.statusInfoLabel.config(text="Incorrect. You reached level " + str(level+1) + " Click start to try again.")  # Update the status label to inform the user that they were incorrect and to show the correct sequence, TODO: update this message to be more user-friendly
-                break  # stop de test als de gebruiker een fout maakt, zodat ze kunnen klikken op start om opnieuw te proberen, dit kan worden aangepast naar een optie om door te gaan naar het volgende level ondanks een fout, afhankelijk van hoe je de test wilt ontwerpen
+                self.statusInfoLabel.config(text="Incorrect. You reached level " + str(level+1) + " Click start to try again.")  
+                break  
 
     def countDown(self, time):  
         message = "Counting down:" 
@@ -95,16 +96,14 @@ class MemoryTestWindow:
             self.statusInfoLabel.update() 
             self.statusInfoLabel.after(1000) 
 
-# NEW schaalbaar gemaakt, TODO eventueel verder parametriseren van de getallen en die in de config.py module
-# stoppen met formules die het geheel passend houden bij andere dimensies van het venster en het canvas. 
+# NEW schaalbaar gemaakt, TODO eventueel verder parametriseren van de getallen en die in de config.py module stoppen
+#   Vervolgens  met formules die het geheel passend houden bij andere dimensies van het venster en het canvas. 
     def prepareObservationPhase(self, kleurdoos):
         self.canvas.delete("all")  # Canvas leegmaken voordat de vierkanten worden getoond, zodat er geen oude vierkanten blijven staan als de test opnieuw wordt gestart
         self.statusInfoLabel.config(text="Get ready!") 
         size= config.getSize()
-        # aantalVierkanten = size*size
         zijde = 600/size
         vierkanten = []
-        # kleurdoos= vulKleurdoos(aantalVierkanten)
         kleurnummer = 0
         for horizontaal in range (size):
             for verticaal in range (size):
@@ -145,7 +144,7 @@ class MemoryTestWindow:
     def userResponsePhase(self, vierkanten, sequenceLength):
         self.statusInfoLabel.config(text="Repeat the sequence by clicking the squares in the correct order!")
         userSequence = []
-        while len(userSequence) < sequenceLength : #len(getoondeReeks): #nog parametriseren en meenemen in de aanroep
+        while len(userSequence) < sequenceLength : 
             for vierkant in vierkanten:
                 vierkant.show() 
                 vierkant.canvas.tag_bind(vierkant.canvas.create_rectangle(vierkant.x1, vierkant.y1, vierkant.x2, vierkant.y2, fill=vierkant.color, outline=vierkant.color), "<Button-1>", lambda event, index=vierkanten.index(vierkant): self.handleSquareClick(vierkanten,index, userSequence))  # Bind a click event to each square to handle user responses, TODO: implement the handleSquareClick method to record user responses and check them against the correct sequence
@@ -155,7 +154,7 @@ class MemoryTestWindow:
 
     def checkUserResponse(self, userSequence, getoondeReeks):
         if userSequence == getoondeReeks:
-            self.canvas.after(500)  # wacht 0,5 seconden voordat het volgende level begint, zodat de gebruiker tijd heeft om zich voor te bereiden, dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
+            self.canvas.after(500)  # wacht 0,5 seconden voordat het volgende level begint, TODO naar config.py of GUI variabele
             return True
         else:
             return False
@@ -163,7 +162,7 @@ class MemoryTestWindow:
    
     def handleSquareClick(self, vierkanten, nummer, userSequence):
         userSequence.append(nummer)
-        self.BlinkSquare(vierkanten, nummer, 500) # tijd dat het vakje knippert als de gebruiker erop klikt, nu hardcoded op 500ms maar dit kan worden aangepast naar een variabele die wordt ingesteld in de GUI
+        self.BlinkSquare(vierkanten, nummer, 500) # tijd dat het vakje knippert als de gebruiker erop klikt, nu nog hardcoded op 500ms TODO naar config.py of GUI variabele
         return userSequence     
 
     

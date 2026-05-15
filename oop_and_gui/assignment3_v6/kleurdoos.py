@@ -1,7 +1,8 @@
 import random
 
 ''' deze functie maakt een kleurenlijst (kleurdoos) aan op basis van het aantal vierkanten om
-iedere keer nieuwe kleuren te hebben, volgens de voorgeschreven regels, allemaal even vaak. Dat kan misschien mooier. '''
+iedere keer nieuwe kleuren te hebben, volgens de voorgeschreven regels, allemaal even vaak. 
+TODO:Dat kan misschien mooier en efficienter met een lijst "keuzekleuren"en random.choice(keuzekleuren), maar ik denk dat de afhandeling dan niet kleiner wordt omdat in deze systematiek de aantallen bijgehouden moeten worden. '''
 
 def vulKleurdoos(aantalVierkanten): # functie om de kleur te bepalen, nog dimensies toevoegen voor de kleur spelregels
     grens = aantalVierkanten//4
