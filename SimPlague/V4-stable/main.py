@@ -14,7 +14,7 @@ sim = Simulation(SIM_WIDTH, HEIGHT)
 running = True
 
 while running:
-    clock.tick(1200)# verhoogde tickrate voor snellere simulatie 60 werkt echt te sloom
+    clock.tick(1200)# drastically higher tickrate for faster simulation, 60 was really slow.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
