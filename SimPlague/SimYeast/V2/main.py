@@ -1,5 +1,5 @@
 import pygame
-from simulation import Simulation
+from SimPlague.SimYeast.V2.simulation import Simulation
 
 pygame.init()
 

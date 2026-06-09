@@ -1,4 +1,4 @@
-from yeast import YeastCell
+from SimPlague.SimYeast.V2.yeast import YeastCell
 import random
 
 class Simulation:
