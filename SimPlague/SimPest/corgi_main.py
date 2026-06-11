@@ -133,7 +133,7 @@ class TreatHunt:
         for i in range(5):
             kookyJar.append(MultiTreat(self.multiTreatImage, self))    
 
-        # experimental new code to check collision with multiple treats in kookyJar, experimental code, werkt nog niet helemaal goed
+        # experimental new code to check collision with multiple treats in kookyJar
         def checkCollisionWithKookyJar(self):
             for treat in kookyJar:
                 if treat.collidesWith(self.corgiSprite):
