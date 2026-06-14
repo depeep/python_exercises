@@ -1,0 +1,255 @@
+import pygame
+import random
+from pathlib import Path
+
+# ---------------------------------------------------------
+# PATHS
+# ---------------------------------------------------------
+base = Path(__file__).parent
+prey1 = base / "assets" / "animated-rabbit.png"
+background = base / "assets" / "background.png"
+food1 = base / "assets" / "lettuce.png"
+food2 = base / "assets" / "carrot.png"
+eatSound1 = base / "assets" / "eat-carrot.mp3"
+
+
+# ---------------------------------------------------------
+# BASE SPRITE CLASS
+# ---------------------------------------------------------
+class Sprite:
+    def __init__(self, image, game):
+        self.image = image
+        self.game = game
+        self.position = [0, 0]
+        self.reset()
+
+    def reset(self):
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self):
+        self.game.surface.blit(self.image, self.position)
+
+    def collidesWith(self, otherSprite):
+        maxX = self.position[0] + self.image.get_width()
+        maxY = self.position[1] + self.image.get_height()
+        otherMaxX = otherSprite.position[0] + otherSprite.image.get_width()
+        otherMaxY = otherSprite.position[1] + otherSprite.image.get_height()
+
+        if self.position[0] > otherMaxX: return False
+        if self.position[1] > otherMaxY: return False
+        if otherSprite.position[0] > maxX: return False
+        if otherSprite.position[1] > maxY: return False
+        return True
+
+    def placeInScreen(self):
+        if self.position[0] < 0:
+            self.position[0] = 0
+        if self.position[1] < 0:
+            self.position[1] = 0
+        if self.position[0] > self.game.width - self.image.get_width():
+            self.position[0] = self.game.width - self.image.get_width()
+        if self.position[1] > self.game.height - self.image.get_height():
+            self.position[1] = self.game.height - self.image.get_height()
+
+
+# ---------------------------------------------------------
+# PREY CLASS
+# ---------------------------------------------------------
+class Prey(Sprite):
+    def __init__(self, image, game):
+        super().__init__(image, game)
+        self.eatSound = pygame.mixer.Sound(eatSound1)
+        self.speed = 5
+
+    def reset(self):
+        self.movingUp = False
+        self.movingDown = False
+        self.movingRight = False
+        self.movingLeft = False
+
+        x = (self.game.width - self.image.get_width()) // 2
+        y = (self.game.height - self.image.get_height()) // 2
+        self.position = [x, y]
+
+    def update(self):
+        if self.movingUp: self.position[1] -= self.speed
+        if self.movingDown: self.position[1] += self.speed
+        if self.movingRight: self.position[0] += self.speed
+        if self.movingLeft: self.position[0] -= self.speed
+
+    def playEatSound(self):
+        self.eatSound.play()
+
+    def randomMovement(self):
+        x = random.randint(-1, 1)
+        if x == -1:
+            self.movingLeft = True
+            self.movingRight = False
+        elif x == 1:
+            self.movingRight = True
+            self.movingLeft = False
+        else:
+            self.movingLeft = False
+            self.movingRight = False
+
+        y = random.randint(-1, 1)
+        if y == -1:
+            self.movingUp = True
+            self.movingDown = False
+        elif y == 1:
+            self.movingDown = True
+            self.movingUp = False
+        else:
+            self.movingUp = False
+            self.movingDown = False
+
+    def changeDirection(self):
+        max_x = self.game.width - self.image.get_width()
+        max_y = self.game.height - self.image.get_height()
+
+        # LINKS RAND
+        if self.position[0] <= 0:
+            self.movingLeft = False
+            self.movingRight = True
+            self.randomMovement()
+            self.movingLeft = False  # extra zekerheid
+
+        # RECHTS RAND
+        elif self.position[0] >= max_x:
+            self.movingRight = False
+            self.movingLeft = True
+            self.randomMovement()
+            self.movingRight = False
+
+        # BOVEN RAND
+        if self.position[1] <= 0:
+            self.movingUp = False
+            self.movingDown = True
+            self.randomMovement()
+            self.movingUp = False
+
+        # ONDER RAND
+        elif self.position[1] >= max_y:
+            self.movingDown = False
+            self.movingUp = True
+            self.randomMovement()
+            self.movingDown = False
+
+# ---------------------------------------------------------
+# FOOD CLASSES
+# ---------------------------------------------------------
+class Food2(Sprite):
+    def reset(self):
+        self.position[0] = random.randint(0, self.game.width - self.image.get_width())
+        self.position[1] = random.randint(0, self.game.height - self.image.get_height())
+
+
+class Food1(Sprite):
+    def reset(self):
+        self.position[0] = random.randint(0, self.game.width - self.image.get_width())
+        self.position[1] = random.randint(0, self.game.height - self.image.get_height())
+
+
+# ---------------------------------------------------------
+# MAIN GAME CLASS
+# ---------------------------------------------------------
+class Habitat:
+
+    # -----------------------------------------------------
+    # TIMESTEP: alle logica in één functie
+    # -----------------------------------------------------
+    def timestep(self, preyPopulation, food1Population):
+        # 1. Prey movement + direction + boundaries
+        for prey in preyPopulation:
+            prey.update()          # eerst bewegen
+            prey.changeDirection() # dan richting aanpassen
+            prey.placeInScreen()   # dan binnen scherm houden
+
+        # 2. Collision with food2
+        for prey in preyPopulation:
+            if self.food2Sprite.collidesWith(prey):
+                self.food2Sprite.reset()
+                prey.playEatSound()
+
+        # 3. Collision with food1Population
+        for food in food1Population:
+            for prey in preyPopulation:
+                if food.collidesWith(prey):
+                    food.reset()
+                    prey.playEatSound()
+
+    # -----------------------------------------------------
+    # DRAW: alle rendering in één functie
+    # -----------------------------------------------------
+    def draw(self, preyPopulation, food1Population):
+        self.backgroundSprite.draw()
+
+        for prey in preyPopulation:
+            prey.draw()
+
+        self.food2Sprite.draw()
+
+        for food in food1Population:
+            food.draw()
+
+        pygame.display.flip()
+
+    # -----------------------------------------------------
+    # MAIN GAME LOOP
+    # -----------------------------------------------------
+    def playGame(self):
+        initResult = pygame.init()
+        if initResult[1] != 0:
+            print("pygame not installed properly")
+            return
+
+        self.width, self.height = 1600, 1000
+        self.surface = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("Corgi's cookie chasing adventure")
+
+        # Load assets
+        backgroundImage = pygame.image.load(background).convert()
+        self.preyImage = pygame.image.load(prey1).convert_alpha()
+        self.food2Image = pygame.image.load(food2).convert_alpha()
+        self.food1Image = pygame.image.load(food1).convert_alpha()
+
+        # Create sprites
+        self.backgroundSprite = Sprite(backgroundImage, self)
+
+        preyPopulation = [Prey(self.preyImage, self) for _ in range(3)]
+        for prey in preyPopulation:
+            prey.randomMovement()
+
+        self.food2Sprite = Food2(self.food2Image, self)
+        food1Population = [Food1(self.food1Image, self) for _ in range(5)]
+
+        clock = pygame.time.Clock()
+        running = True
+
+        while running:
+            clock.tick(60)
+
+            # INPUT
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
+                    running = False
+                elif e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+                    running = False
+
+            # UPDATE LOGICA
+            self.timestep(preyPopulation, food1Population)
+
+            # TEKENEN
+            self.draw(preyPopulation, food1Population)
+
+        pygame.quit()
+
+
+# ---------------------------------------------------------
+# START GAME
+# ---------------------------------------------------------
+game = Habitat()
+game.playGame()
