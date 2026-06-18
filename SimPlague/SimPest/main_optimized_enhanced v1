@@ -3,9 +3,8 @@ import random
 from pathlib import Path
 import math
 
-# ---------------------------------------------------------
 # PATHS
-# ---------------------------------------------------------
+
 base = Path(__file__).parent
 prey1 = base / "assets" / "animated-rabbit.png"
 pred1 = base / "assets" / "wolf.png"          # <-- voeg dit toe aan assets
@@ -14,9 +13,9 @@ food1 = base / "assets" / "lettuce.png"
 eatSound1 = base / "assets" / "eat-carrot.mp3"
 
 
-# ---------------------------------------------------------
+
 # HELPER FUNCTIONS
-# ---------------------------------------------------------
+
 def distance(a, b):
     return math.dist(a, b)
 
@@ -25,9 +24,9 @@ def clamp(value, minv, maxv):
     return max(minv, min(value, maxv))
 
 
-# ---------------------------------------------------------
+
 # BASE SPRITE CLASS
-# ---------------------------------------------------------
+
 class Sprite:
     def __init__(self, image, game):
         self.image = image
@@ -61,9 +60,9 @@ class Sprite:
         self.position[1] = clamp(self.position[1], 0, self.game.height - self.image.get_height())
 
 
-# ---------------------------------------------------------
+
 # FOOD CLASS
-# ---------------------------------------------------------
+
 class Food(Sprite):
     def reset(self):
         self.position = [
@@ -72,9 +71,9 @@ class Food(Sprite):
         ]
 
 
-# ---------------------------------------------------------
+
 # PREY CLASS (AI + ENERGY + REPRODUCTION)
-# ---------------------------------------------------------
+
 class Prey(Sprite):
     def __init__(self, image, game):
         super().__init__(image, game)
@@ -121,9 +120,9 @@ class Prey(Sprite):
             self.game.spawnPrey()
 
 
-# ---------------------------------------------------------
+
 # PREDATOR CLASS (AI + ENERGY)
-# ---------------------------------------------------------
+
 class Predator(Sprite):
     def __init__(self, image, game):
         super().__init__(image, game)
@@ -171,9 +170,9 @@ class Predator(Sprite):
 
 
 
-# ---------------------------------------------------------
+
 # MAIN GAME CLASS
-# ---------------------------------------------------------
+
 class SurvivalSim:
 
     def getClosestFood(self, pos):
