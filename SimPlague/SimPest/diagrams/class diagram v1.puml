@@ -1,0 +1,100 @@
+@startuml
+title SurvivalSim - Class Diagram
+
+' ===========================
+' Base Sprite Class
+' ===========================
+
+class Sprite {
+    + image
+    + game
+    + position : list
+    --
+    + reset()
+    + update()
+    + draw()
+    + collidesWith(otherSprite)
+    + placeInScreen()
+}
+
+' ===========================
+' Food
+' ===========================
+
+class Food {
+    + reset()
+}
+
+Sprite <|-- Food
+
+' ===========================
+' Prey
+' ===========================
+
+class Prey {
+    + eatSound
+    + speed : int
+    + energy : float
+    --
+    + reset()
+    + update()
+    + eat(food)
+}
+
+Sprite <|-- Prey
+
+' ===========================
+' Predator
+' ===========================
+
+class Predator {
+    + speed : int
+    + energy : float
+    --
+    + reset()
+    + update()
+}
+
+Sprite <|-- Predator
+
+' ===========================
+' SurvivalSim
+' ===========================
+
+class SurvivalSim {
+    + width : int
+    + height : int
+    + surface
+    + clock
+    + debugFont
+    + preyImage
+    + predImage
+    + foodImage
+    + backgroundSprite : Sprite
+    + preyPopulation : list
+    + predatorPopulation : list
+    + foodPopulation : list
+    --
+    + getClosestFood(pos)
+    + getClosestPrey(pos)
+    + spawnPrey()
+    + spawnPredator()
+    + timestep()
+    + draw()
+    + playGame()
+}
+
+' ===========================
+' Relationships
+' ===========================
+
+SurvivalSim "1" o-- "*" Prey
+SurvivalSim "1" o-- "*" Predator
+SurvivalSim "1" o-- "*" Food
+SurvivalSim "1" o-- "1" Sprite : background
+
+Prey --> SurvivalSim : uses game
+Predator --> SurvivalSim : uses game
+Food --> SurvivalSim : uses game
+
+@enduml
