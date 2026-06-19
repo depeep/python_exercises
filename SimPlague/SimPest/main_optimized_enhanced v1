@@ -161,10 +161,10 @@ class Predator(Sprite):
                 self.energy += 120
                 self.game.preyPopulation.remove(target)
 
-                # voortplanting
-                if self.energy > 1000:
-                    self.energy -= 300
-                    self.game.spawnPredator()
+        # voortplanting
+        if self.energy > 1000:
+            self.energy -= 500
+            self.game.spawnPredator()
 
         self.placeInScreen()
 
