@@ -1,0 +1,68 @@
+@startuml
+title Habitat Ecosysteem – Klassendiagram
+
+class Habitat {
+    - preys : List<Prey>
+    - predators : List<Predator>
+    - foods : List<Food>
+
+    + time_step()
+    - time_steps()
+    - dying()
+    - feeding()
+}
+
+class Prey {
+    - x : int
+    - y : int
+    - image : Image
+    - stamina : int
+    - speed : int
+    - age : int
+    - max_age : int
+
+    + time_step()
+    - move()
+    + feed()
+}
+
+class Predator {
+    - x : int
+    - y : int
+    - image : Image
+    - stamina : int
+    - speed : int
+    - age : int
+    - max_age : int
+
+    + time_step()
+    - move()
+    + feeding()
+}
+
+class Food {
+    - x : int
+    - y : int
+    - image : Image
+    - stamina : int
+    - growth_speed : int
+
+    + time_step()
+    + feeding()
+}
+
+class Image {
+    - sprite : str
+    - size : int
+}
+
+' Relaties
+Habitat "1" --> "*" Prey
+Habitat "1" --> "*" Predator
+Habitat "1" --> "*" Food
+
+Prey --> Image
+Predator --> Image
+Food --> Image
+
+@enduml

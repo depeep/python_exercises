@@ -1,0 +1,132 @@
+@startuml
+title Ecosystem Simulation - Class Diagram
+
+' ===========================
+' ABSTRACT BASE CLASS
+' ===========================
+class Sprite {
+    +image
+    +game
+    +position : [float, float]
+    --
+    +reset()
+    +update()
+    +draw()
+    +collidesWith(otherSprite)
+    +placeInScreen()
+}
+
+' ===========================
+' FOOD
+' ===========================
+class Food {
+    +reset()
+}
+
+Sprite <|-- Food
+
+' ===========================
+' PREY 1
+' ===========================
+class Prey {
+    -eatSound
+    -speed : int
+    -energy : float
+    --
+    +reset()
+    +update()
+    +eat(food)
+}
+
+Sprite <|-- Prey
+
+' ===========================
+' PREY 2
+' ===========================
+class Prey2 {
+    -eatSound
+    -speed : int
+    -energy : float
+    --
+    +reset()
+    +update()
+    +eat(food)
+}
+
+Sprite <|-- Prey2
+
+' ===========================
+' PREDATOR
+' ===========================
+class Predator {
+    -speed : int
+    -energy : float
+    --
+    +reset()
+    +update()
+}
+
+Sprite <|-- Predator
+
+' ===========================
+' SURVIVAL SIM
+' ===========================
+class SurvivalSim {
+    -width : int
+    -height : int
+    -panel_width : int
+    -graph_height : int
+    -surface
+    -clock
+    -debugFont
+    -uiFont
+    -smallFont
+    -sim_rect
+    -graph_rect
+    -buttons
+    -param_fields
+    -paused : bool
+    -food_spawn_chance : float
+    -max_food : int
+    -max_history : int
+    -food_history
+    -prey_history
+    -prey2_history
+    -pred_history
+    -preyPopulation : list
+    -prey2Population : list
+    -predatorPopulation : list
+    -foodPopulation : list
+    --
+    +getClosestFood(pos)
+    +getClosestPrey(pos)
+    +getClosestAnyPrey(pos)
+    +spawnPrey()
+    +spawnPrey2()
+    +spawnPredator()
+    +spawnFood()
+    +reproduceFood()
+    +resetSimulation()
+    +setup_ui()
+    +handleButton(action)
+    +drawPanel()
+    +timestep()
+    +drawBottomGraph()
+    +draw()
+    +playGame()
+}
+
+' ===========================
+' RELATIONSHIPS
+' ===========================
+SurvivalSim "1" --> "many" Prey
+SurvivalSim "1" --> "many" Prey2
+SurvivalSim "1" --> "many" Predator
+SurvivalSim "1" --> "many" Food
+
+Prey --> Food : eats >
+Prey2 --> Food : eats >
+Predator --> Prey : hunts >
+Predator --> Prey2 : hunts >
+
+@enduml

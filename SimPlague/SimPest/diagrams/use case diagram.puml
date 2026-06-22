@@ -1,0 +1,39 @@
+@startuml
+title Use Case Diagram - SurvivalSim
+
+actor Player as P
+actor "Game Loop" as GL
+
+rectangle SurvivalSim {
+
+    usecase "Start Simulation" as UC_Start
+    usecase "Run Timestep" as UC_Timestep
+    usecase "Render Frame" as UC_Render
+    usecase "Update Prey" as UC_UpdatePrey
+    usecase "Update Predator" as UC_UpdatePred
+    usecase "Handle Food Respawn" as UC_Food
+    usecase "Collision Detection" as UC_Collision
+    usecase "Spawn New Prey" as UC_SpawnPrey
+    usecase "Spawn New Predator" as UC_SpawnPred
+    usecase "End Simulation" as UC_End
+}
+
+' Player interactions
+P --> UC_Start
+P --> UC_End
+
+' Game loop drives the simulation
+GL --> UC_Timestep
+GL --> UC_Render
+
+' Timestep includes internal processes
+UC_Timestep --> UC_UpdatePrey
+UC_Timestep --> UC_UpdatePred
+UC_Timestep --> UC_Collision
+UC_Timestep --> UC_Food
+
+' Reproduction
+UC_UpdatePrey --> UC_SpawnPrey
+UC_UpdatePred --> UC_SpawnPred
+
+@enduml

@@ -1,0 +1,309 @@
+import pygame
+import random
+from pathlib import Path
+import math
+
+# ---------------------------------------------------------
+# PATHS
+# ---------------------------------------------------------
+base = Path(__file__).parent
+prey1 = base / "assets" / "animated-rabbit.png"
+pred1 = base / "assets" / "wolf.png"          # <-- voeg dit toe aan assets
+background = base / "assets" / "background.png"
+food1 = base / "assets" / "lettuce.png"
+eatSound1 = base / "assets" / "eat-carrot.mp3"
+
+
+# ---------------------------------------------------------
+# HELPER FUNCTIONS
+# ---------------------------------------------------------
+def distance(a, b):
+    return math.dist(a, b)
+
+
+def clamp(value, minv, maxv):
+    return max(minv, min(value, maxv))
+
+
+# ---------------------------------------------------------
+# BASE SPRITE CLASS
+# ---------------------------------------------------------
+class Sprite:
+    def __init__(self, image, game):
+        self.image = image
+        self.game = game
+        self.position = [0, 0]
+        self.reset()
+
+    def reset(self):
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self):
+        self.game.surface.blit(self.image, self.position)
+
+    def collidesWith(self, otherSprite):
+        maxX = self.position[0] + self.image.get_width()
+        maxY = self.position[1] + self.image.get_height()
+        otherMaxX = otherSprite.position[0] + otherSprite.image.get_width()
+        otherMaxY = otherSprite.position[1] + otherSprite.image.get_height()
+
+        if self.position[0] > otherMaxX: return False
+        if self.position[1] > otherMaxY: return False
+        if otherSprite.position[0] > maxX: return False
+        if otherSprite.position[1] > maxY: return False
+        return True
+
+    def placeInScreen(self):
+        self.position[0] = clamp(self.position[0], 0, self.game.width - self.image.get_width())
+        self.position[1] = clamp(self.position[1], 0, self.game.height - self.image.get_height())
+
+
+# ---------------------------------------------------------
+# FOOD CLASS
+# ---------------------------------------------------------
+class Food(Sprite):
+    def reset(self):
+        self.position = [
+            random.randint(0, self.game.width - self.image.get_width()),
+            random.randint(0, self.game.height - self.image.get_height())
+        ]
+
+
+# ---------------------------------------------------------
+# PREY CLASS (AI + ENERGY + REPRODUCTION)
+# ---------------------------------------------------------
+class Prey(Sprite):
+    def __init__(self, image, game):
+        super().__init__(image, game)
+        self.eatSound = pygame.mixer.Sound(eatSound1)
+        self.speed = 3
+        self.energy = 100
+
+    def reset(self):
+        self.position = [
+            random.randint(0, self.game.width - self.image.get_width()),
+            random.randint(0, self.game.height - self.image.get_height())
+        ]
+
+    def update(self):
+        # energieverlies
+        self.energy -= 0.1
+        if self.energy <= 0:
+            self.game.preyPopulation.remove(self)
+            return
+
+        # AI: zoek dichtstbijzijnde voedsel
+        target = self.game.getClosestFood(self.position)
+        if target:
+            tx, ty = target.position
+            px, py = self.position
+
+            dx = tx - px
+            dy = ty - py
+            dist = math.hypot(dx, dy)
+
+            if dist > 0:
+                self.position[0] += self.speed * dx / dist
+                self.position[1] += self.speed * dy / dist
+
+        self.placeInScreen()
+
+    def eat(self, food):
+        self.energy += 30
+        self.eatSound.play()
+
+        # voortplanting
+        if self.energy > 50:
+            self.energy -= 20
+            self.game.spawnPrey()
+
+
+# ---------------------------------------------------------
+# PREDATOR CLASS (AI + ENERGY)
+# ---------------------------------------------------------
+class Predator(Sprite):
+    def __init__(self, image, game):
+        super().__init__(image, game)
+        self.speed = 4
+        self.energy = 200
+
+    def reset(self):
+        self.position = [
+            random.randint(0, self.game.width - self.image.get_width()),
+            random.randint(0, self.game.height - self.image.get_height())
+        ]
+
+    def update(self):
+        # energieverlies
+        self.energy -= 2
+        if self.energy <= 0:
+            self.game.predatorPopulation.remove(self)
+            return
+
+        # AI: zoek dichtstbijzijnde prey
+        target = self.game.getClosestPrey(self.position)
+        if target:
+            tx, ty = target.position
+            px, py = self.position
+
+            dx = tx - px
+            dy = ty - py
+            dist = math.hypot(dx, dy)
+
+            if dist > 0:
+                self.position[0] += self.speed * dx / dist
+                self.position[1] += self.speed * dy / dist
+
+            # eet prey
+            if self.collidesWith(target):
+                self.energy += 120
+                self.game.preyPopulation.remove(target)
+
+                # voortplanting
+                if self.energy > 1000:
+                    self.energy -= 300
+                    self.game.spawnPredator()
+
+        self.placeInScreen()
+
+
+
+# ---------------------------------------------------------
+# MAIN GAME CLASS
+# ---------------------------------------------------------
+class SurvivalSim:
+
+    def getClosestFood(self, pos):
+        if not self.foodPopulation:
+            return None
+        return min(self.foodPopulation, key=lambda f: distance(pos, f.position))
+
+    def getClosestPrey(self, pos):
+        if not self.preyPopulation:
+            return None
+        return min(self.preyPopulation, key=lambda p: distance(pos, p.position))
+
+    def spawnPrey(self):
+        self.preyPopulation.append(Prey(self.preyImage, self))
+
+    def spawnPredator(self):
+        self.predatorPopulation.append(Predator(self.predImage, self))
+
+    def timestep(self):
+        # log populatie
+        self.populationLog.append({
+            "prey": len(self.preyPopulation),
+            "predators": len(self.predatorPopulation)
+        })
+
+        for prey in list(self.preyPopulation):
+            prey.update()
+
+        for pred in list(self.predatorPopulation):
+            pred.update()
+
+        # prey eet food
+        for food in list(self.foodPopulation):
+            for prey in list(self.preyPopulation):
+                if prey.collidesWith(food):
+                    prey.eat(food)
+                    food.reset()
+
+    def draw(self):
+        self.backgroundSprite.draw()
+
+        for prey in self.preyPopulation:
+            prey.draw()
+
+        for pred in self.predatorPopulation:
+            pred.draw()
+
+        for food in self.foodPopulation:
+            food.draw()
+
+        # DEBUG OVERLAY
+        fps = int(self.clock.get_fps())
+        debug_text = (
+            f"FPS: {fps} | Prey: {len(self.preyPopulation)} | "
+            f"Predators: {len(self.predatorPopulation)} | Food: {len(self.foodPopulation)}"
+        )
+        text = self.debugFont.render(debug_text, True, (255, 255, 255))
+        self.surface.blit(text, (10, 10))
+
+        pygame.display.flip()
+
+    def saveCSV(self):
+        import csv
+        with open("population_log.csv", "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["timestep", "prey", "predators"])
+            for i, entry in enumerate(self.populationLog):
+                writer.writerow([i, entry["prey"], entry["predators"]])
+
+    def plotGraphs(self):
+        import matplotlib.pyplot as plt
+
+        timesteps = list(range(len(self.populationLog)))
+        prey = [entry["prey"] for entry in self.populationLog]
+        predators = [entry["predators"] for entry in self.populationLog]
+
+        plt.figure(figsize=(10,5))
+        plt.plot(timesteps, prey, label="Prey", color="green")
+        plt.plot(timesteps, predators, label="Predators", color="red")
+        plt.xlabel("Timestep")
+        plt.ylabel("Population size")
+        plt.title("Population dynamics over time")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+    def playGame(self):
+        pygame.init()
+
+        self.width, self.height = 1600, 1000
+        self.surface = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("Ecosystem Simulation")
+
+        self.clock = pygame.time.Clock()
+        self.debugFont = pygame.font.SysFont("consolas", 24)
+
+        # logging
+        self.populationLog = []
+
+        # Load assets
+        backgroundImage = pygame.image.load(background).convert()
+        self.preyImage = pygame.image.load(prey1).convert_alpha()
+        self.predImage = pygame.image.load(pred1).convert_alpha()
+        self.foodImage = pygame.image.load(food1).convert_alpha()
+
+        # Create sprites
+        self.backgroundSprite = Sprite(backgroundImage, self)
+
+        self.preyPopulation = [Prey(self.preyImage, self) for _ in range(6)]
+        self.predatorPopulation = [Predator(self.predImage, self) for _ in range(2)]
+        self.foodPopulation = [Food(self.foodImage, self) for _ in range(12)]
+
+        running = True
+
+        while running:
+            self.clock.tick(60)
+
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
+                    running = False
+
+            self.timestep()
+            self.draw()
+
+        pygame.quit()
+
+        # na het spel:
+        self.saveCSV()
+        self.plotGraphs()
+
+
+game = SurvivalSim()
+game.playGame()

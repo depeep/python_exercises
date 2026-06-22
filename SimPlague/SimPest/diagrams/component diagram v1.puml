@@ -1,0 +1,41 @@
+@startuml
+title Component Diagram - SurvivalSim Ecosystem
+
+' ===========================
+' Components
+' ===========================
+
+component "SurvivalSim\n(Game Engine)" as SurvivalSim
+component "Sprite\n(Base Class)" as Sprite
+component "Prey\n(Agent)" as Prey
+component "Predator\n(Agent)" as Predator
+component "Food\n(Resource)" as Food
+component "Pygame\n(Rendering + Audio)" as Pygame
+component "Assets\n(Images + Sounds)" as Assets
+component "Math/Random\n(Utility)" as Utils
+
+' ===========================
+' Relationships
+' ===========================
+
+SurvivalSim --> Prey : manages population
+SurvivalSim --> Predator : manages population
+SurvivalSim --> Food : manages population
+SurvivalSim --> Sprite : background rendering
+
+Prey --> Sprite : inherits
+Predator --> Sprite : inherits
+Food --> Sprite : inherits
+
+Prey --> SurvivalSim : queries closest food\nspawns offspring
+Predator --> SurvivalSim : queries closest prey\nspawns offspring
+
+Sprite --> Pygame : rendering\ncollision bounds
+SurvivalSim --> Pygame : window, clock, events
+Prey --> Pygame : sound playback
+
+SurvivalSim --> Assets : loads images & audio
+Sprite --> Utils : clamp()
+SurvivalSim --> Utils : distance()
+
+@enduml

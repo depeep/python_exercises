@@ -1,0 +1,47 @@
+@startuml
+title Sequence Diagram - timestep() in SurvivalSim
+
+actor GameLoop
+
+GameLoop -> SurvivalSim : timestep()
+
+group Update Prey
+    loop for each prey in preyPopulation
+        SurvivalSim -> Prey : update()
+        alt prey.energy <= 0
+            Prey -> SurvivalSim : remove self from preyPopulation
+        else
+            Prey -> Prey : move toward closest food\n(placeInScreen)
+        end
+    end
+end
+
+group Update Predators
+    loop for each predator in predatorPopulation
+        SurvivalSim -> Predator : update()
+        alt predator.energy <= 0
+            Predator -> SurvivalSim : remove self from predatorPopulation
+        else
+            Predator -> Predator : move toward closest prey\n(placeInScreen)
+            alt collidesWith(prey)
+                Predator -> SurvivalSim : remove prey
+                Predator -> Predator : energy += 120
+            end
+        end
+    end
+end
+
+group Prey eats Food
+    loop for each food in foodPopulation
+        loop for each prey in preyPopulation
+            SurvivalSim -> Prey : collidesWith(food)
+            alt collision == True
+                Prey -> Prey : eat(food)\nenergy += 30
+                Prey -> SurvivalSim : spawnPrey() (if energy > 50)
+                SurvivalSim -> Food : reset()
+            end
+        end
+    end
+end
+
+@enduml
