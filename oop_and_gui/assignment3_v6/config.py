@@ -14,7 +14,7 @@ class Config:
         self.__canvasWidth = 1200
         self.__canvasHeight = 700
         # squares horizontal
-        self.__size = 4 #aantal vierkanten op een rij
+        self.__size = 6 #aantal vierkanten op een rij
 
 
 

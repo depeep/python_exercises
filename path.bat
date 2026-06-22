@@ -1,0 +1,1 @@
+PATH C:\Users\josvp\AppData\Roaming\Python\Python314\Scripts
