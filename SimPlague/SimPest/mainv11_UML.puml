@@ -1,0 +1,153 @@
+@startuml
+class DummySound {
+    play()
+    load_sound_safe()
+        __init__()
+}
+class Sprite {
+    reset()
+    update()
+    draw()
+    collidesWith()
+    placeInScreen()
+        image
+    game
+    __init__()
+}
+class Food {
+    reset()
+    update()
+        age
+    __init__()
+}
+class Prey {
+    reset()
+    update()
+    eat()
+        eatSound
+    speed
+    energy
+    age
+    __init__()
+}
+class Prey2 {
+    reset()
+    update()
+    eat()
+        eatSound
+    speed
+    energy
+    age
+    __init__()
+}
+class Predator {
+    reset()
+    update()
+        speed
+    energy
+    age
+    __init__()
+}
+class SurvivalSim {
+    getClosestFood()
+    getClosestPrey()
+    getClosestAnyPrey()
+    spawnPrey()
+    spawnPrey2()
+    spawnPredator()
+    spawnFood()
+    reproduceFood()
+    resetSimulation()
+    setup_ui()
+    update_param_fields()
+    get_field_value_text()
+    commit_active_field()
+    handleTextInput()
+    handleButton()
+    drawPanel()
+    timestep()
+    drawBottomGraph()
+    make_points()
+    draw()
+    playGame()
+        width
+    height
+    panel_width
+    graph_height
+    surface
+    clock
+    debugFont
+    uiFont
+    smallFont
+    tinyFont
+    sim_rect
+    graph_rect
+    active_field
+    paused
+    simulation_started
+    start_food
+    start_prey
+    start_prey2
+    start_predators
+    food_speed
+    food_max_age
+    food_spawn_chance
+    max_food
+    prey_speed
+    prey_max_age
+    prey_reproduction_energy
+    prey_energy_gain
+    prey_energy_loss
+    prey_reproduction_cost
+    prey2_speed
+    prey2_max_age
+    prey2_reproduction_energy
+    prey2_energy_gain
+    prey2_energy_loss
+    prey2_reproduction_cost
+    predator_speed
+    predator_max_age
+    predator_reproduction_energy
+    predator_energy_gain
+    predator_energy_loss
+    predator_reproduction_cost
+    max_history
+    food_history
+    prey_history
+    prey2_history
+    pred_history
+    csv_file
+    csv_writer
+    timestep_counter
+    timestep_counter
+    active_field
+    active_field
+    input_text
+    simulation_started
+    paused
+    paused
+    paused
+    simulation_started
+    surface
+    clock
+    debugFont
+    uiFont
+    smallFont
+    tinyFont
+    preyImage
+    prey2Image
+    predImage
+    foodImage
+    backgroundImage
+    csv_file
+    csv_writer
+    timestep_counter
+    active_field
+    input_text
+    __init__()
+}
+Sprite <|-- Food
+Sprite <|-- Prey
+Sprite <|-- Prey2
+Sprite <|-- Predator
+@enduml
