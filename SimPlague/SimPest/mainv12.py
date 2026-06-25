@@ -546,41 +546,30 @@ class SurvivalSim:
         box_h = 23
         label_x = 20
         box_x = 245
-
         fields = [
-            ("Start food", "start_food", "int"),
-            ("Start prey", "start_prey", "int"),
-            ("Start prey2", "start_prey2", "int"),
-            ("Start predators", "start_predators", "int"),
+            # FOOD
+            ("Food aantal", "start_food", "int"),
+            ("Food snelheid", "food_speed", "float"),
+            ("Food max leeftijd", "food_max_age", "int"),
+            ("Food reproduce kans", "food_spawn_chance", "float"),
 
-            ("Food speed", "food_speed", "float"),
-            ("Food max age", "food_max_age", "int"),
-            ("Food spawn chance", "food_spawn_chance", "float"),
-            ("Max food", "max_food", "int"),
+            # PREY 1
+            ("Prey aantal", "start_prey", "int"),
+            ("Prey snelheid", "prey_speed", "float"),
+            ("Prey max leeftijd", "prey_max_age", "int"),
+            ("Prey reproduce energie", "prey_reproduction_energy", "float"),
 
-            ("Prey speed", "prey_speed", "float"),
-            ("Prey max age", "prey_max_age", "int"),
-            ("Prey start energy", "prey_start_energy", "float"),
-            ("Prey energy loss", "prey_energy_loss", "float"),
-            ("Prey energy gain", "prey_energy_gain", "float"),
-            ("Prey reproduce energy", "prey_reproduction_energy", "float"),
-            ("Prey reproduce cost", "prey_reproduction_cost", "float"),
+            # PREY 2
+            ("Prey2 aantal", "start_prey2", "int"),
+            ("Prey2 snelheid", "prey2_speed", "float"),
+            ("Prey2 max leeftijd", "prey2_max_age", "int"),
+            ("Prey2 reproduce energie", "prey2_reproduction_energy", "float"),
 
-            ("Prey2 speed", "prey2_speed", "float"),
-            ("Prey2 max age", "prey2_max_age", "int"),
-            ("Prey2 start energy", "prey2_start_energy", "float"),
-            ("Prey2 energy loss", "prey2_energy_loss", "float"),
-            ("Prey2 energy gain", "prey2_energy_gain", "float"),
-            ("Prey2 reproduce energy", "prey2_reproduction_energy", "float"),
-            ("Prey2 reproduce cost", "prey2_reproduction_cost", "float"),
-
-            ("Pred speed", "predator_speed", "float"),
-            ("Pred max age", "predator_max_age", "int"),
-            ("Pred start energy", "predator_start_energy", "float"),
-            ("Pred energy loss", "predator_energy_loss", "float"),
-            ("Pred energy gain", "predator_energy_gain", "float"),
-            ("Pred reproduce energy", "predator_reproduction_energy", "float"),
-            ("Pred reproduce cost", "predator_reproduction_cost", "float"),
+            # PREDATOR
+            ("Predator aantal", "start_predators", "int"),
+            ("Predator snelheid", "predator_speed", "float"),
+            ("Predator max leeftijd", "predator_max_age", "int"),
+            ("Predator reproduce energie", "predator_reproduction_energy", "float"),
         ]
 
         self.param_fields = []
@@ -711,7 +700,7 @@ class SurvivalSim:
             value = self.tinyFont.render(value_text, True, (50, 50, 50))
             self.surface.blit(value, (rect.x + 7, rect.y + 4))
 
-        stats_y = 1105
+        stats_y = 850
         stats_title = self.uiFont.render("Live Stats", True, (240, 240, 240))
         self.surface.blit(stats_title, (20, stats_y))
 
