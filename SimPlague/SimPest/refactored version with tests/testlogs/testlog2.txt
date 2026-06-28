@@ -1,0 +1,289 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.7, pytest-9.0.3, pluggy-1.6.0 -- c:\Users\josvp\OneDrive\studie fontys\SEMESTER2\python\code\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\josvp\OneDrive\studie fontys\SEMESTER2\python\code\SimPlague\SimPest\refactored version with tests
+configfile: pytest.ini
+plugins: cov-7.1.0
+collecting ... collected 211 items
+
+test_core.py::TestSimulationEngine::test_get_closest_food_empty_returns_none PASSED [  0%]
+test_core.py::TestSimulationEngine::test_get_closest_food_single_item PASSED [  0%]
+test_core.py::TestSimulationEngine::test_get_closest_food_picks_nearest PASSED [  1%]
+test_core.py::TestSimulationEngine::test_get_closest_food_ties_returns_one_of_them PASSED [  1%]
+test_core.py::TestSimulationEngine::test_get_closest_prey_target_empty_returns_none PASSED [  2%]
+test_core.py::TestSimulationEngine::test_get_closest_prey_target_prey1_only PASSED [  2%]
+test_core.py::TestSimulationEngine::test_get_closest_prey_target_prey2_only PASSED [  3%]
+test_core.py::TestSimulationEngine::test_get_closest_prey_target_mixed_picks_nearest PASSED [  3%]
+test_core.py::TestSimulationEngine::test_reproduce_food_does_nothing_at_max PASSED [  4%]
+test_core.py::TestSimulationEngine::test_reproduce_food_adds_food_when_chance_1 PASSED [  4%]
+test_core.py::TestSimulationEngine::test_reproduce_food_never_spawns_when_chance_0 PASSED [  5%]
+test_core.py::TestSimulationEngine::test_reproduce_food_respects_max_cap PASSED [  5%]
+test_core.py::TestSimulationEngine::test_new_food_position_near_parent PASSED [  6%]
+test_core.py::TestSimulationEngine::test_update_calls_entity_update PASSED [  6%]
+test_core.py::TestSimulationEngine::test_update_triggers_eating PASSED   [  7%]
+test_core.py::TestSimulationEngine::test_update_appends_history PASSED   [  7%]
+test_core.py::TestSimulationEngine::test_update_logs_step PASSED         [  8%]
+test_core.py::TestSimulationEngine::test_update_saves_snapshot_every_10_steps PASSED [  8%]
+test_core.py::TestEntityFactory::test_spawn_prey1_adds_to_population PASSED [  9%]
+test_core.py::TestEntityFactory::test_spawn_prey1_creates_prey1_instance PASSED [  9%]
+test_core.py::TestEntityFactory::test_spawn_prey_alias_delegates_to_spawn_prey1 PASSED [  9%]
+test_core.py::TestEntityFactory::test_spawn_prey2_adds_to_population PASSED [ 10%]
+test_core.py::TestEntityFactory::test_spawn_prey2_creates_prey2_instance PASSED [ 10%]
+test_core.py::TestEntityFactory::test_spawn_predator_adds_to_population PASSED [ 11%]
+test_core.py::TestEntityFactory::test_spawn_predator_creates_predator_instance PASSED [ 11%]
+test_core.py::TestEntityFactory::test_spawn_food_adds_to_population PASSED [ 12%]
+test_core.py::TestEntityFactory::test_spawn_food_creates_food_instance PASSED [ 12%]
+test_core.py::TestEntityFactory::test_spawn_food_respects_max_food_cap PASSED [ 13%]
+test_core.py::TestEntityFactory::test_multiple_spawns_accumulate PASSED  [ 13%]
+test_core.py::TestEntityFactory::test_spawned_entity_has_valid_position PASSED [ 14%]
+test_entities.py::TestSprite::test_position_initialised PASSED           [ 14%]
+test_entities.py::TestSprite::test_draw_blits_to_surface PASSED          [ 15%]
+test_entities.py::TestSprite::test_place_in_screen_clamps_left PASSED    [ 15%]
+test_entities.py::TestSprite::test_place_in_screen_clamps_top PASSED     [ 16%]
+test_entities.py::TestSprite::test_place_in_screen_clamps_right PASSED   [ 16%]
+test_entities.py::TestSprite::test_place_in_screen_clamps_bottom PASSED  [ 17%]
+test_entities.py::TestSprite::test_collides_with_overlapping_sprite PASSED [ 17%]
+test_entities.py::TestSprite::test_no_collision_far_apart PASSED         [ 18%]
+test_entities.py::TestSprite::test_no_collision_just_right_of PASSED     [ 18%]
+test_entities.py::TestSprite::test_collision_is_symmetric PASSED         [ 18%]
+test_entities.py::TestFood::test_initial_age_zero PASSED                 [ 19%]
+test_entities.py::TestFood::test_position_within_sim_rect PASSED         [ 19%]
+test_entities.py::TestFood::test_update_increments_age PASSED            [ 20%]
+test_entities.py::TestFood::test_update_removes_when_too_old PASSED      [ 20%]
+test_entities.py::TestFood::test_update_still_alive_below_max_age PASSED [ 21%]
+test_entities.py::TestFood::test_reset_sets_age_zero PASSED              [ 21%]
+test_entities.py::TestFood::test_food_moves_when_speed_nonzero PASSED    [ 22%]
+test_entities.py::TestFood::test_food_stays_put_when_speed_zero PASSED   [ 22%]
+test_entities.py::TestPrey1::test_initial_energy PASSED                  [ 23%]
+test_entities.py::TestPrey1::test_initial_age_zero PASSED                [ 23%]
+test_entities.py::TestPrey1::test_update_increments_age FAILED           [ 24%]
+test_entities.py::TestPrey1::test_update_loses_energy FAILED             [ 24%]
+test_entities.py::TestPrey1::test_dies_of_old_age PASSED                 [ 25%]
+test_entities.py::TestPrey1::test_dies_of_starvation PASSED              [ 25%]
+test_entities.py::TestPrey1::test_moves_toward_food PASSED               [ 26%]
+test_entities.py::TestPrey1::test_eat_increases_energy PASSED            [ 26%]
+test_entities.py::TestPrey1::test_eat_triggers_reproduction_when_enough_energy PASSED [ 27%]
+test_entities.py::TestPrey1::test_eat_deducts_reproduction_cost PASSED   [ 27%]
+test_entities.py::TestPrey1::test_eat_plays_sound PASSED                 [ 27%]
+test_entities.py::TestPrey1::test_no_reproduction_below_threshold PASSED [ 28%]
+test_entities.py::TestPrey1::test_reset_randomises_position PASSED       [ 28%]
+test_entities.py::TestPrey2::test_initial_energy PASSED                  [ 29%]
+test_entities.py::TestPrey2::test_initial_age_zero PASSED                [ 29%]
+test_entities.py::TestPrey2::test_update_loses_energy FAILED             [ 30%]
+test_entities.py::TestPrey2::test_dies_of_old_age PASSED                 [ 30%]
+test_entities.py::TestPrey2::test_dies_of_starvation PASSED              [ 31%]
+test_entities.py::TestPrey2::test_eat_increases_energy PASSED            [ 31%]
+test_entities.py::TestPrey2::test_eat_triggers_reproduction PASSED       [ 32%]
+test_entities.py::TestPrey2::test_no_reproduction_below_threshold PASSED [ 32%]
+test_entities.py::TestPrey2::test_eat_plays_sound PASSED                 [ 33%]
+test_entities.py::TestPrey2::test_moves_toward_food PASSED               [ 33%]
+test_entities.py::TestPrey2::test_prey2_faster_than_prey1 PASSED         [ 34%]
+test_entities.py::TestPredator::test_initial_energy PASSED               [ 34%]
+test_entities.py::TestPredator::test_initial_age_zero PASSED             [ 35%]
+test_entities.py::TestPredator::test_update_loses_energy PASSED          [ 35%]
+test_entities.py::TestPredator::test_dies_of_old_age PASSED              [ 36%]
+test_entities.py::TestPredator::test_dies_of_starvation PASSED           [ 36%]
+test_entities.py::TestPredator::test_moves_toward_prey PASSED            [ 36%]
+test_entities.py::TestPredator::test_kills_prey1_on_collision PASSED     [ 37%]
+test_entities.py::TestPredator::test_kills_prey2_on_collision PASSED     [ 37%]
+test_entities.py::TestPredator::test_gains_energy_after_eating PASSED    [ 38%]
+test_entities.py::TestPredator::test_reproduces_when_energy_high PASSED  [ 38%]
+test_entities.py::TestPredator::test_no_reproduction_below_threshold PASSED [ 39%]
+test_entities.py::TestPredator::test_stays_within_sim_bounds PASSED      [ 39%]
+test_infra.py::TestDistance::test_same_point_is_zero PASSED              [ 40%]
+test_infra.py::TestDistance::test_horizontal PASSED                      [ 40%]
+test_infra.py::TestDistance::test_vertical PASSED                        [ 41%]
+test_infra.py::TestDistance::test_diagonal_pythagorean PASSED            [ 41%]
+test_infra.py::TestDistance::test_symmetry PASSED                        [ 42%]
+test_infra.py::TestDistance::test_negative_coordinates PASSED            [ 42%]
+test_infra.py::TestDistance::test_float_coordinates PASSED               [ 43%]
+test_infra.py::TestClamp::test_below_min_returns_min PASSED              [ 43%]
+test_infra.py::TestClamp::test_above_max_returns_max PASSED              [ 44%]
+test_infra.py::TestClamp::test_within_range_unchanged PASSED             [ 44%]
+test_infra.py::TestClamp::test_at_min_boundary PASSED                    [ 45%]
+test_infra.py::TestClamp::test_at_max_boundary PASSED                    [ 45%]
+test_infra.py::TestClamp::test_float_values PASSED                       [ 45%]
+test_infra.py::TestClamp::test_negative_range PASSED                     [ 46%]
+test_infra.py::TestDummySound::test_play_does_not_raise PASSED           [ 46%]
+test_infra.py::TestDummySound::test_play_returns_none PASSED             [ 47%]
+test_infra.py::TestAssetManager::test_get_image_missing_key_returns_none PASSED [ 47%]
+test_infra.py::TestAssetManager::test_load_and_get_image PASSED          [ 48%]
+test_infra.py::TestAssetManager::test_load_image_without_size_skips_scale PASSED [ 48%]
+test_infra.py::TestAssetManager::test_get_sound_missing_key_returns_dummy PASSED [ 49%]
+test_infra.py::TestAssetManager::test_load_sound_success PASSED          [ 49%]
+test_infra.py::TestAssetManager::test_load_sound_failure_stores_dummy PASSED [ 50%]
+test_infra.py::TestAssetManager::test_images_dict_accumulates_keys PASSED [ 50%]
+test_persistence.py::TestDataLogger::test_initial_timestep_counter_zero PASSED [ 51%]
+test_persistence.py::TestDataLogger::test_start_new_run_creates_csv PASSED [ 51%]
+test_persistence.py::TestDataLogger::test_start_new_run_creates_export_dir PASSED [ 52%]
+test_persistence.py::TestDataLogger::test_start_new_run_resets_counter PASSED [ 52%]
+test_persistence.py::TestDataLogger::test_start_new_run_resets_full_data PASSED [ 53%]
+test_persistence.py::TestDataLogger::test_log_step_increments_counter PASSED [ 53%]
+test_persistence.py::TestDataLogger::test_log_step_returns_row PASSED    [ 54%]
+test_persistence.py::TestDataLogger::test_log_step_appends_to_full_data PASSED [ 54%]
+test_persistence.py::TestDataLogger::test_log_step_writes_to_csv PASSED  [ 54%]
+test_persistence.py::TestDataLogger::test_multiple_steps_all_written PASSED [ 55%]
+test_persistence.py::TestDataLogger::test_close_csv_is_idempotent PASSED [ 55%]
+test_persistence.py::TestDataLogger::test_log_step_without_run_does_not_crash PASSED [ 56%]
+test_persistence.py::TestDataLogger::test_export_snapshot_creates_file PASSED [ 56%]
+test_persistence.py::TestDataLogger::test_export_snapshot_file_contains_data PASSED [ 57%]
+test_persistence.py::TestDataLogger::test_timestep_monotonically_increases PASSED [ 57%]
+test_persistence.py::TestSnapshotEngine::test_tables_exist PASSED        [ 58%]
+test_persistence.py::TestSnapshotEngine::test_save_returns_integer_id PASSED [ 58%]
+test_persistence.py::TestSnapshotEngine::test_save_records_timestep PASSED [ 59%]
+test_persistence.py::TestSnapshotEngine::test_save_stores_all_entity_types PASSED [ 59%]
+test_persistence.py::TestSnapshotEngine::test_save_stores_positions PASSED [ 60%]
+test_persistence.py::TestSnapshotEngine::test_save_stores_energy PASSED  [ 60%]
+test_persistence.py::TestSnapshotEngine::test_multiple_saves_create_multiple_snapshots PASSED [ 61%]
+test_persistence.py::TestSnapshotEngine::test_list_snapshots_empty_initially PASSED [ 61%]
+test_persistence.py::TestSnapshotEngine::test_list_snapshots_returns_all PASSED [ 62%]
+test_persistence.py::TestSnapshotEngine::test_list_snapshots_ordered_by_id PASSED [ 62%]
+test_persistence.py::TestSnapshotEngine::test_list_snapshots_contains_timestep PASSED [ 63%]
+test_persistence.py::TestSnapshotEngine::test_get_latest_snapshot_id_none_when_empty PASSED [ 63%]
+test_persistence.py::TestSnapshotEngine::test_get_latest_snapshot_id_returns_max PASSED [ 63%]
+test_persistence.py::TestSnapshotEngine::test_load_restores_prey1_count PASSED [ 64%]
+test_persistence.py::TestSnapshotEngine::test_load_restores_food_count PASSED [ 64%]
+test_persistence.py::TestSnapshotEngine::test_load_restores_predator_count PASSED [ 65%]
+test_persistence.py::TestSnapshotEngine::test_load_restores_prey1_position PASSED [ 65%]
+test_persistence.py::TestSnapshotEngine::test_load_clears_existing_populations PASSED [ 66%]
+test_persistence.py::TestSnapshotEngine::test_clear_all_empties_snapshots PASSED [ 66%]
+test_persistence.py::TestSnapshotEngine::test_clear_all_empties_entities PASSED [ 67%]
+test_persistence.py::TestSnapshotEngine::test_clear_all_allows_new_save_after PASSED [ 67%]
+test_simulation.py::TestSurvivalSimInit::test_populations_empty_on_init PASSED [ 68%]
+test_simulation.py::TestSurvivalSimInit::test_paused_on_init PASSED      [ 68%]
+test_simulation.py::TestSurvivalSimInit::test_simulation_not_started_on_init PASSED [ 69%]
+test_simulation.py::TestSurvivalSimInit::test_history_deques_created PASSED [ 69%]
+test_simulation.py::TestSurvivalSimInit::test_subsystems_created PASSED  [ 70%]
+test_simulation.py::TestSurvivalSimInit::test_prey1_alias_matches_prey PASSED [ 70%]
+test_simulation.py::TestSurvivalSimInit::test_default_width_and_height PASSED [ 71%]
+test_simulation.py::TestSurvivalSimReset::test_reset_creates_prey1_population PASSED [ 71%]
+test_simulation.py::TestSurvivalSimReset::test_reset_creates_prey2_population PASSED [ 72%]
+test_simulation.py::TestSurvivalSimReset::test_reset_creates_predator_population PASSED [ 72%]
+test_simulation.py::TestSurvivalSimReset::test_reset_creates_food_population PASSED [ 72%]
+test_simulation.py::TestSurvivalSimReset::test_reset_clears_history PASSED [ 73%]
+test_simulation.py::TestSurvivalSimReset::test_reset_resets_logger_counter PASSED [ 73%]
+test_simulation.py::TestSurvivalSimReset::test_reset_populates_history_with_initial_counts PASSED [ 74%]
+test_simulation.py::TestSurvivalSimReset::test_reset_twice_gives_correct_population_size PASSED [ 74%]
+test_simulation.py::TestSurvivalSimReset::test_reset_prey_alias_updated PASSED [ 75%]
+test_simulation.py::TestSurvivalSimReset::test_all_entities_have_valid_positions PASSED [ 75%]
+test_simulation.py::TestSurvivalSimTimestep::test_timestep_does_nothing_when_paused PASSED [ 76%]
+test_simulation.py::TestSurvivalSimTimestep::test_timestep_calls_engine_update_when_running PASSED [ 76%]
+test_simulation.py::TestSurvivalSimTimestep::test_timestep_syncs_aliases PASSED [ 77%]
+test_simulation.py::TestSurvivalSimSyncAliases::test_sync_keeps_prey_population_alias PASSED [ 77%]
+test_simulation.py::TestSurvivalSimSyncAliases::test_sync_keeps_prey_image_alias PASSED [ 78%]
+test_simulation.py::TestSurvivalSimSyncAliases::test_sync_copies_speed_alias PASSED [ 78%]
+test_simulation.py::TestSurvivalSimSyncAliases::test_sync_copies_energy_loss_alias PASSED [ 79%]
+test_simulation.py::TestSurvivalSimDraw::test_draw_calls_ui_draw_panel PASSED [ 79%]
+test_simulation.py::TestSurvivalSimDraw::test_draw_calls_graph_draw FAILED [ 80%]
+test_simulation.py::TestSurvivalSimDraw::test_draw_blits_background FAILED [ 80%]
+test_ui.py::TestUIController::test_buttons_created_after_setup PASSED    [ 81%]
+test_ui.py::TestUIController::test_param_fields_created_after_setup PASSED [ 81%]
+test_ui.py::TestUIController::test_active_field_initially_none PASSED    [ 81%]
+test_ui.py::TestUIController::test_slider_value_in_range PASSED          [ 82%]
+test_ui.py::TestUIController::test_start_unpauses_game PASSED            [ 82%]
+test_ui.py::TestUIController::test_start_calls_reset_when_not_started PASSED [ 83%]
+test_ui.py::TestUIController::test_start_calls_logger_start_new_run_when_not_started PASSED [ 83%]
+test_ui.py::TestUIController::test_start_does_not_reset_when_already_started PASSED [ 84%]
+test_ui.py::TestUIController::test_pause_sets_paused_true PASSED         [ 84%]
+test_ui.py::TestUIController::test_reset_pauses_game PASSED              [ 85%]
+test_ui.py::TestUIController::test_reset_calls_reset_simulation PASSED   [ 85%]
+test_ui.py::TestUIController::test_reset_marks_not_started PASSED        [ 86%]
+test_ui.py::TestUIController::test_reset_closes_csv PASSED               [ 86%]
+test_ui.py::TestUIController::test_step_calls_engine_update PASSED       [ 87%]
+test_ui.py::TestUIController::test_step_keeps_game_paused PASSED         [ 87%]
+test_ui.py::TestUIController::test_step_syncs_aliases PASSED             [ 88%]
+test_ui.py::TestUIController::test_spawn_prey1 PASSED                    [ 88%]
+test_ui.py::TestUIController::test_spawn_prey2 PASSED                    [ 89%]
+test_ui.py::TestUIController::test_spawn_food PASSED                     [ 89%]
+test_ui.py::TestUIController::test_spawn_predator PASSED                 [ 90%]
+test_ui.py::TestUIController::test_export_csv_calls_logger PASSED        [ 90%]
+test_ui.py::TestUIController::test_export_params_creates_file PASSED     [ 90%]
+test_ui.py::TestUIController::test_export_params_file_contains_params PASSED [ 91%]
+test_ui.py::TestUIController::test_clear_snapshots_calls_engine PASSED   [ 91%]
+test_ui.py::TestUIController::test_clear_snapshots_resets_slider PASSED  [ 92%]
+test_ui.py::TestUIController::test_text_input_ignored_when_no_active_field PASSED [ 92%]
+test_ui.py::TestUIController::test_text_input_adds_digit FAILED          [ 93%]
+test_ui.py::TestUIController::test_text_input_backspace FAILED           [ 93%]
+test_ui.py::TestUIController::test_text_input_escape_clears_field PASSED [ 94%]
+test_ui.py::TestUIController::test_commit_int_field PASSED               [ 94%]
+test_ui.py::TestUIController::test_commit_negative_value_clamped_to_zero PASSED [ 95%]
+test_ui.py::TestUIController::test_commit_invalid_text_leaves_value_unchanged PASSED [ 95%]
+test_ui.py::TestUIController::test_speed_slider_min PASSED               [ 96%]
+test_ui.py::TestUIController::test_speed_slider_max PASSED               [ 96%]
+test_ui.py::TestUIController::test_speed_slider_clamped_below PASSED     [ 97%]
+test_ui.py::TestUIController::test_speed_slider_clamped_above PASSED     [ 97%]
+test_ui.py::TestGraphRenderer::test_draw_does_not_raise PASSED           [ 98%]
+test_ui.py::TestGraphRenderer::test_draw_renders_title PASSED            [ 98%]
+test_ui.py::TestGraphRenderer::test_draw_with_empty_history_does_not_crash PASSED [ 99%]
+test_ui.py::TestGraphRenderer::test_draw_with_single_entry_does_not_crash PASSED [ 99%]
+test_ui.py::TestGraphRenderer::test_graph_renderer_holds_game_reference PASSED [100%]
+
+================================== FAILURES ===================================
+____________________ TestPrey1.test_update_increments_age _____________________
+test_entities.py:168: in test_update_increments_age
+    p.update()
+entities\prey1.py:36: in update
+    tx, ty = target.position
+    ^^^^^^
+E   ValueError: not enough values to unpack (expected 2, got 0)
+_____________________ TestPrey1.test_update_loses_energy ______________________
+test_entities.py:174: in test_update_loses_energy
+    p.update()
+entities\prey1.py:36: in update
+    tx, ty = target.position
+    ^^^^^^
+E   ValueError: not enough values to unpack (expected 2, got 0)
+_____________________ TestPrey2.test_update_loses_energy ______________________
+test_entities.py:269: in test_update_loses_energy
+    p.update()
+entities\prey2.py:36: in update
+    tx, ty = target.position
+    ^^^^^^
+E   ValueError: not enough values to unpack (expected 2, got 0)
+_______________ TestSurvivalSimDraw.test_draw_calls_graph_draw ________________
+test_simulation.py:253: in test_draw_calls_graph_draw
+    sim.draw()
+core\simulation.py:396: in draw
+    self.ui.draw_panel()
+ui\ui_controller.py:297: in draw_panel
+    y_sep1 = self.buttons[-1]["rect"].bottom + 15
+             ^^^^^^^^^^^^^^^^
+E   IndexError: list index out of range
+_______________ TestSurvivalSimDraw.test_draw_blits_background ________________
+test_simulation.py:257: in test_draw_blits_background
+    sim.draw()
+core\simulation.py:396: in draw
+    self.ui.draw_panel()
+ui\ui_controller.py:297: in draw_panel
+    y_sep1 = self.buttons[-1]["rect"].bottom + 15
+             ^^^^^^^^^^^^^^^^
+E   IndexError: list index out of range
+_________________ TestUIController.test_text_input_adds_digit _________________
+test_ui.py:187: in test_text_input_adds_digit
+    assert "7" in ui.input_text
+E   AssertionError: assert '7' in ''
+E    +  where '' = <ui.ui_controller.UIController object at 0x00000245191EEB60>.input_text
+_________________ TestUIController.test_text_input_backspace __________________
+test_ui.py:197: in test_text_input_backspace
+    assert ui.input_text == "4"
+E   AssertionError: assert '' == '4'
+E     
+E     - 4
+============================== warnings summary ===============================
+..\..\..\.venv\Lib\site-packages\_pytest\config\__init__.py:1581
+  c:\Users\josvp\OneDrive\studie fontys\SEMESTER2\python\code\.venv\Lib\site-packages\_pytest\config\__init__.py:1581: PytestConfigWarning: No files were found in testpaths; consider removing or adjusting your testpaths configuration. Searching recursively from the current directory instead.
+    self.args, self.args_source = self._decide_args(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED test_entities.py::TestPrey1::test_update_increments_age - ValueError: not enough values to unpack (expected 2, got 0)
+FAILED test_entities.py::TestPrey1::test_update_loses_energy - ValueError: not enough values to unpack (expected 2, got 0)
+FAILED test_entities.py::TestPrey2::test_update_loses_energy - ValueError: not enough values to unpack (expected 2, got 0)
+FAILED test_simulation.py::TestSurvivalSimDraw::test_draw_calls_graph_draw - IndexError: list index out of range
+FAILED test_simulation.py::TestSurvivalSimDraw::test_draw_blits_background - IndexError: list index out of range
+FAILED test_ui.py::TestUIController::test_text_input_adds_digit - AssertionError: assert '7' in ''
+ +  where '' = <ui.ui_controller.UIController object at 0x00000245191EEB60>.input_text
+FAILED test_ui.py::TestUIController::test_text_input_backspace - AssertionError: assert '' == '4'
+  
+  - 4
+================== 7 failed, 204 passed, 1 warning in 1.52s ===================

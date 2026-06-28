@@ -7,6 +7,12 @@ class Sprite:
         self.position = [0, 0]
         self.reset()
 
+    def reset(self):
+        pass
+
+    def update(self):
+        pass
+
     def draw(self):
         self.game.surface.blit(self.image, self.position)
 

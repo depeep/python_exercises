@@ -1,0 +1,1 @@
+pytest -v >testlogs\testlogx.txt
