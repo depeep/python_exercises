@@ -1,9 +1,3 @@
-# main2.py
-# Refactored single-file version with AssetManager integrated.
-# Includes: Prey1 naming, Pause button, Step button, parameter export,
-# 3-row button layout, speed slider, time slider, and SnapshotEngine integration.
-# Load this file and run. Ensure pygame is installed and assets folder exists.
-
 import csv
 import pygame
 import random
