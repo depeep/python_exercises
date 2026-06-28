@@ -129,6 +129,17 @@ class SnapshotEngine:
                 obj.energy = energy
                 obj.age = age
 
+    
+    
+    # ==================================================
+    # reset functie, maakt snapshot leeg
+    # ==================================================
+    def clear_all(self):
+        self.cur.execute("DELETE FROM entities")
+        self.cur.execute("DELETE FROM snapshots")
+        self.conn.commit()
+
+
     # ==================================================
     # HELPERS
     # ==================================================

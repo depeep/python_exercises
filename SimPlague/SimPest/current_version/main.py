@@ -1,5 +1,7 @@
-# mainv13_SRP_assets.py
+# main2.py
 # Refactored single-file version with AssetManager integrated.
+# Includes: Prey1 naming, Pause button, Step button, parameter export,
+# 3-row button layout, speed slider, time slider, and SnapshotEngine integration.
 # Load this file and run. Ensure pygame is installed and assets folder exists.
 
 import csv
@@ -9,7 +11,6 @@ from pathlib import Path
 import math
 from collections import deque
 from datetime import datetime
-import sqlite3 #voor snapshot
 from snapshot_engine import SnapshotEngine
 
 base = Path(__file__).parent
@@ -47,15 +48,10 @@ class AssetManager:
         self.sounds = {}
 
     def load_image(self, key, path, size=None, convert_alpha=True):
-        """
-        Load an image and optionally scale it.
-        Returns the pygame.Surface stored under key.
-        """
         img = pygame.image.load(path)
         img = img.convert_alpha() if convert_alpha else img.convert()
 
         if size:
-            # Use smoothscale for better quality
             img = pygame.transform.smoothscale(img, size)
 
         self.images[key] = img
@@ -65,9 +61,6 @@ class AssetManager:
         return self.images.get(key)
 
     def load_sound(self, key, path):
-        """
-        Load a sound. If mixer or file fails, store DummySound.
-        """
         try:
             snd = pygame.mixer.Sound(path)
             self.sounds[key] = snd
@@ -96,7 +89,6 @@ class Sprite:
         pass
 
     def draw(self):
-        # image is a Surface
         self.game.surface.blit(self.image, self.position)
 
     def collidesWith(self, otherSprite):
@@ -152,12 +144,11 @@ class Food(Sprite):
             self.placeInScreen()
 
 
-class Prey(Sprite):
+class Prey1(Sprite):
     def __init__(self, image, game):
         super().__init__(image, game)
-        # Use AssetManager sound
         self.eatSound = self.game.assets.get_sound("eat")
-        self.energy = self.game.prey_start_energy
+        self.energy = self.game.prey1_start_energy
         self.age = 0
 
     def reset(self):
@@ -170,15 +161,15 @@ class Prey(Sprite):
     def update(self):
         self.age += 1
 
-        if self.age > self.game.prey_max_age:
-            if self in self.game.preyPopulation:
-                self.game.preyPopulation.remove(self)
+        if self.age > self.game.prey1_max_age:
+            if self in self.game.prey1Population:
+                self.game.prey1Population.remove(self)
             return
 
-        self.energy -= self.game.prey_energy_loss
+        self.energy -= self.game.prey1_energy_loss
         if self.energy <= 0:
-            if self in self.game.preyPopulation:
-                self.game.preyPopulation.remove(self)
+            if self in self.game.prey1Population:
+                self.game.prey1Population.remove(self)
             return
 
         target = self.game.engine.getClosestFood(self.position)
@@ -190,18 +181,18 @@ class Prey(Sprite):
             dist = math.hypot(dx, dy)
 
             if dist > 0:
-                self.position[0] += self.game.prey_speed * dx / dist
-                self.position[1] += self.game.prey_speed * dy / dist
+                self.position[0] += self.game.prey1_speed * dx / dist
+                self.position[1] += self.game.prey1_speed * dy / dist
 
         self.placeInScreen()
 
     def eat(self, food):
-        self.energy += self.game.prey_energy_gain
+        self.energy += self.game.prey1_energy_gain
         self.eatSound.play()
 
-        if self.energy > self.game.prey_reproduction_energy:
-            self.energy -= self.game.prey_reproduction_cost
-            self.game.factory.spawnPrey()
+        if self.energy > self.game.prey1_reproduction_energy:
+            self.energy -= self.game.prey1_reproduction_cost
+            self.game.factory.spawnPrey1()
 
 
 class Prey2(Sprite):
@@ -282,7 +273,7 @@ class Predator(Sprite):
                 self.game.predatorPopulation.remove(self)
             return
 
-        target = self.game.engine.getClosestAnyPrey(self.position)
+        target = self.game.engine.getClosestAnyPreyTarget(self.position)
         if target:
             tx, ty = target.position
             px, py = self.position
@@ -297,8 +288,8 @@ class Predator(Sprite):
             if self.collidesWith(target):
                 self.energy += self.game.predator_energy_gain
 
-                if target in self.game.preyPopulation:
-                    self.game.preyPopulation.remove(target)
+                if target in self.game.prey1Population:
+                    self.game.prey1Population.remove(target)
                 elif target in self.game.prey2Population:
                     self.game.prey2Population.remove(target)
 
@@ -308,109 +299,6 @@ class Predator(Sprite):
 
         self.placeInScreen()
 
-# ==================================================
-# SNAPSHOTDB MAKER
-# ==================================================
-'''#verplaatst naar snapshot_engine.py
-# import sqlite3   #naar boven naar imports
-
-class SnapshotDB:
-    def __init__(self, db_path):
-        self.conn = sqlite3.connect(db_path)
-        self.cur = self.conn.cursor()
-        self.create_tables()
-
-    def create_tables(self):
-        self.cur.execute("""
-        CREATE TABLE IF NOT EXISTS snapshots (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestep INTEGER,
-            created_at TEXT
-        )
-        """)
-
-        self.cur.execute("""
-        CREATE TABLE IF NOT EXISTS entities (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            snapshot_id INTEGER,
-            type TEXT,
-            x REAL,
-            y REAL,
-            energy REAL,
-            age INTEGER,
-            FOREIGN KEY (snapshot_id) REFERENCES snapshots(id)
-        )
-        """)
-        self.conn.commit()
-
-    def save_snapshot(self, game):
-        from datetime import datetime
-
-        # 1. snapshot rij
-        self.cur.execute(
-            "INSERT INTO snapshots (timestep, created_at) VALUES (?, ?)",
-            (game.logger.timestep_counter, datetime.now().isoformat())
-        )
-        snapshot_id = self.cur.lastrowid
-
-        # 2. food
-        for f in game.foodPopulation:
-            self.cur.execute("""
-                INSERT INTO entities (snapshot_id, type, x, y, energy, age)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                snapshot_id,
-                "food",
-                f.position[0],
-                f.position[1],
-                None,
-                f.age
-            ))
-
-        # 3. prey
-        for p in game.preyPopulation:
-            self.cur.execute("""
-                INSERT INTO entities VALUES (NULL, ?, ?, ?, ?, ?, ?)
-            """, (
-                snapshot_id,
-                "prey",
-                p.position[0],
-                p.position[1],
-                p.energy,
-                p.age
-            ))
-
-        # 4. prey2
-        for p in game.prey2Population:
-            self.cur.execute("""
-                INSERT INTO entities VALUES (NULL, ?, ?, ?, ?, ?, ?)
-            """, (
-                snapshot_id,
-                "prey2",
-                p.position[0],
-                p.position[1],
-                p.energy,
-                p.age
-            ))
-
-        # 5. predators
-        for pr in game.predatorPopulation:
-            self.cur.execute("""
-                INSERT INTO entities VALUES (NULL, ?, ?, ?, ?, ?, ?)
-            """, (
-                snapshot_id,
-                "predator",
-                pr.position[0],
-                pr.position[1],
-                pr.energy,
-                pr.age
-            ))
-
-        self.conn.commit()
-
-    def close(self):
-        self.conn.close()
-'''
 
 # ==================================================
 # DATA LOGGER
@@ -441,7 +329,7 @@ class DataLogger:
         self.csv_path = self.export_dir / f"simulation_run_{timestamp}.csv"
         self.csv_file = open(self.csv_path, "w", newline="", encoding="utf-8")
         self.csv_writer = csv.writer(self.csv_file, delimiter=";")
-        self.csv_writer.writerow(["Timestep", "Food", "Prey", "Prey2", "Predators"])
+        self.csv_writer.writerow(["Timestep", "Food", "Prey1", "Prey2", "Predators"])
         self.csv_file.flush()
 
         self.full_data = []
@@ -450,12 +338,12 @@ class DataLogger:
         self.export_message = f"Nieuwe CSV: {self.csv_path.name}"
         self.export_message_timer = 180
 
-    def log_step(self, food, prey, prey2, predators):
+    def log_step(self, food, prey1_count, prey2_count, predators):
         row = [
             self.timestep_counter,
             food,
-            prey,
-            prey2,
+            prey1_count,
+            prey2_count,
             predators,
         ]
         self.full_data.append(row)
@@ -478,7 +366,7 @@ class DataLogger:
 
         with open(snapshot_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f, delimiter=";")
-            writer.writerow(["Timestep", "Food", "Prey", "Prey2", "Predators"])
+            writer.writerow(["Timestep", "Food", "Prey1", "Prey2", "Predators"])
             writer.writerows(self.full_data)
 
         self.export_message = f"Volledige export: {snapshot_path.name}"
@@ -494,8 +382,13 @@ class EntityFactory:
     def __init__(self, game):
         self.game = game
 
-    def spawnPrey(self):
-        self.game.preyPopulation.append(Prey(self.game.preyImage, self.game))
+    
+    def spawnPrey1(self):
+        self.game.prey1Population.append(Prey1(self.game.prey1Image, self.game))
+        self.game.sync_prey1_aliases()
+
+    def spawnPrey(self):  # compatibiliteit met snapshot_engine na wijzigen naam prey naar prey1
+        self.spawnPrey1()
 
     def spawnPrey2(self):
         self.game.prey2Population.append(Prey2(self.game.prey2Image, self.game))
@@ -520,11 +413,11 @@ class SimulationEngine:
             return None
         return min(self.game.foodPopulation, key=lambda f: distance(pos, f.position))
 
-    def getClosestAnyPrey(self, pos):
-        all_prey = self.game.preyPopulation + self.game.prey2Population
-        if not all_prey:
+    def getClosestAnyPreyTarget(self, pos):
+        all_targets = self.game.prey1Population + self.game.prey2Population
+        if not all_targets:
             return None
-        return min(all_prey, key=lambda p: distance(pos, p.position))
+        return min(all_targets, key=lambda p: distance(pos, p.position))
 
     def reproduceFood(self):
         if len(self.game.foodPopulation) >= self.game.max_food:
@@ -556,11 +449,11 @@ class SimulationEngine:
         self.game.foodPopulation.extend(new_food)
 
     def update(self):
-        for prey in list(self.game.preyPopulation):
-            prey.update()
+        for prey1_obj in list(self.game.prey1Population):
+            prey1_obj.update()
 
-        for prey2 in list(self.game.prey2Population):
-            prey2.update()
+        for prey2_obj in list(self.game.prey2Population):
+            prey2_obj.update()
 
         for pred in list(self.game.predatorPopulation):
             pred.update()
@@ -571,9 +464,9 @@ class SimulationEngine:
         for food in list(self.game.foodPopulation):
             eaten = False
 
-            for prey in list(self.game.preyPopulation):
-                if prey.collidesWith(food):
-                    prey.eat(food)
+            for prey1_obj in list(self.game.prey1Population):
+                if prey1_obj.collidesWith(food):
+                    prey1_obj.eat(food)
                     food.reset()
                     eaten = True
                     break
@@ -581,9 +474,9 @@ class SimulationEngine:
             if eaten:
                 continue
 
-            for prey2 in list(self.game.prey2Population):
-                if prey2.collidesWith(food):
-                    prey2.eat(food)
+            for prey2_obj in list(self.game.prey2Population):
+                if prey2_obj.collidesWith(food):
+                    prey2_obj.eat(food)
                     food.reset()
                     eaten = True
                     break
@@ -591,20 +484,20 @@ class SimulationEngine:
         self.reproduceFood()
 
         self.game.food_history.append(len(self.game.foodPopulation))
-        self.game.prey_history.append(len(self.game.preyPopulation))
+        self.game.prey1_history.append(len(self.game.prey1Population))
         self.game.prey2_history.append(len(self.game.prey2Population))
         self.game.pred_history.append(len(self.game.predatorPopulation))
 
         self.game.logger.log_step(
             len(self.game.foodPopulation),
-            len(self.game.preyPopulation),
+            len(self.game.prey1Population),
             len(self.game.prey2Population),
             len(self.game.predatorPopulation),
         )
-        # updwegschrijven van snapshotDB data
-        # self.game.snapshot_db.save_snapshot(self.game)
-        # nieuw
-        self.game.snapshot_engine.save(self.game)
+
+        # Sla niet elke frame een snapshot op, maar bijvoorbeeld elke 10 stappen.
+        if self.game.logger.timestep_counter % 10 == 0:
+            self.game.snapshot_engine.save(self.game)
 
 
 # ==================================================
@@ -620,21 +513,47 @@ class UIController:
         self.export_message = ""
         self.export_message_timer = 0
 
+        # slider voor snelheid
+        self.slider_rect = pygame.Rect(20, 810, 320, 20)
+        self.slider_value = (self.game.sim_speed - 0.1) / 4.9
+        self.slider_active = False
+
+        # time slider voor snapshots
+        self.time_slider_rect = pygame.Rect(20, 880, 320, 20)
+        self.time_slider_value = 0.0
+        self.time_slider_active = False
+        self.available_snapshots = []
+        self.last_loaded_snapshot_id = None
+
     def setup_ui(self):
+        btn_w = 80
+        btn_h = 42
+        gap = 10
+        x1, x2, x3, x4 = 20, 20 + btn_w + gap, 20 + 2 * (btn_w + gap), 20 + 3 * (btn_w + gap)
+        y1, y2, y3 = 20, 70, 120
+
         self.buttons = [
-            {"label": "Start",       "rect": pygame.Rect(20, 20, 160, 42),  "action": "start",      "color": (60, 140, 80)},
-            {"label": "Stop",        "rect": pygame.Rect(200, 20, 160, 42), "action": "stop",       "color": (160, 70, 70)},
-            {"label": "Reset",       "rect": pygame.Rect(20, 72, 160, 42),  "action": "reset",      "color": (70, 90, 120)},
-            {"label": "Spawn Prey",  "rect": pygame.Rect(200, 72, 160, 42), "action": "spawn_prey", "color": (70, 90, 120)},
-            {"label": "Spawn Prey2", "rect": pygame.Rect(20, 124, 160, 42), "action": "spawn_prey2","color": (70, 90, 120)},
-            {"label": "Spawn Food",  "rect": pygame.Rect(200, 124, 160, 42),"action": "spawn_food", "color": (70, 90, 120)},
-            {"label": "Spawn Pred",  "rect": pygame.Rect(20, 176, 160, 42), "action": "spawn_pred", "color": (70, 90, 120)},
-            {"label": "Export CSV",  "rect": pygame.Rect(200, 176, 160, 42),"action": "export_csv", "color": (120, 120, 40)},
+            # Rij 1: start, pause, reset, step
+            {"label": "Start", "rect": pygame.Rect(x1, y1, btn_w, btn_h), "action": "start", "color": (60, 140, 80)},
+            {"label": "Pause", "rect": pygame.Rect(x2, y1, btn_w, btn_h), "action": "pause", "color": (160, 70, 70)},
+            {"label": "Reset", "rect": pygame.Rect(x3, y1, btn_w, btn_h), "action": "reset", "color": (70, 90, 120)},
+            {"label": "Step", "rect": pygame.Rect(x4, y1, btn_w, btn_h), "action": "step", "color": (120, 120, 200)},
+
+            # Rij 2: spawn prey1, spawn prey2, spawn food, spawn predator
+            {"label": "Spawn P1", "rect": pygame.Rect(x1, y2, btn_w, btn_h), "action": "spawn_prey1", "color": (70, 90, 120)},
+            {"label": "Spawn P2", "rect": pygame.Rect(x2, y2, btn_w, btn_h), "action": "spawn_prey2", "color": (70, 90, 120)},
+            {"label": "Food", "rect": pygame.Rect(x3, y2, btn_w, btn_h), "action": "spawn_food", "color": (70, 90, 120)},
+            {"label": "Predator", "rect": pygame.Rect(x4, y2, btn_w, btn_h), "action": "spawn_pred", "color": (70, 90, 120)},
+
+            # Rij 3: export csv, export parameters, clear snapshot, lege ruimte(gelijke breedte als andere knoppen)
+            {"label": "CSV", "rect": pygame.Rect(x1, y3, btn_w, btn_h), "action": "export_csv", "color": (120,120,40)},
+            {"label": "Params", "rect": pygame.Rect(x2, y3, btn_w, btn_h), "action": "export_params", "color": (100,70,140)},
+            {"label": "Clear", "rect": pygame.Rect(x3, y3, btn_w, btn_h), "action": "clear_snapshots", "color": (140,60,60)},
         ]
         self.update_param_fields()
 
     def update_param_fields(self):
-        start_y = 285
+        start_y = 245
         row_h = 31
         box_w = 120
         box_h = 23
@@ -645,10 +564,10 @@ class UIController:
             ("Food snelheid", "food_speed", "float"),
             ("Food max leeftijd", "food_max_age", "int"),
             ("Food reproduce kans", "food_spawn_chance", "float"),
-            ("Prey aantal", "start_prey", "int"),
-            ("Prey snelheid", "prey_speed", "float"),
-            ("Prey max leeftijd", "prey_max_age", "int"),
-            ("Prey reproduce energie", "prey_reproduction_energy", "float"),
+            ("Prey1 aantal", "start_prey1", "int"),
+            ("Prey1 snelheid", "prey1_speed", "float"),
+            ("Prey1 max leeftijd", "prey1_max_age", "int"),
+            ("Prey1 reproduce energie", "prey1_reproduction_energy", "float"),
             ("Prey2 aantal", "start_prey2", "int"),
             ("Prey2 snelheid", "prey2_speed", "float"),
             ("Prey2 max leeftijd", "prey2_max_age", "int"),
@@ -721,6 +640,82 @@ class UIController:
             if char.isdigit() or char in [".", ","]:
                 self.input_text += char
 
+    def update_speed_slider_from_mouse(self, mx):
+        rect = self.slider_rect
+        mx = max(rect.left, min(mx, rect.right))
+        self.slider_value = (mx - rect.left) / rect.width
+        self.game.sim_speed = 0.1 + self.slider_value * 4.9
+
+    def update_time_slider_from_mouse(self, mx):
+        rect = self.time_slider_rect
+        mx = max(rect.left, min(mx, rect.right))
+        self.time_slider_value = (mx - rect.left) / rect.width
+
+        self.available_snapshots = self.game.snapshot_engine.list_snapshots()
+
+        if not self.available_snapshots:
+            self.export_message = "Geen snapshots gevonden"
+            self.export_message_timer = 120
+            return
+
+        index = int(self.time_slider_value * (len(self.available_snapshots) - 1))
+        snapshot = self.available_snapshots[index]
+
+        snapshot_id = snapshot[0]
+        timestep = snapshot[1] if len(snapshot) > 1 else None
+
+        if snapshot_id == self.last_loaded_snapshot_id:
+            return
+
+        self.game.paused = True
+        loaded = self.game.snapshot_engine.load(self.game, snapshot_id)
+        self.game.sync_prey1_aliases()
+
+        if loaded is not False:
+            self.last_loaded_snapshot_id = snapshot_id
+
+            if timestep is not None:
+                self.game.logger.timestep_counter = timestep
+
+            self.export_message = f"Snapshot geladen: id {snapshot_id}, t={timestep}"
+            self.export_message_timer = 120
+        else:
+            self.export_message = f"Snapshot {snapshot_id} kon niet geladen worden"
+            self.export_message_timer = 120
+
+    def ensure_run_started(self):
+        if not self.game.simulation_started:
+            self.game.logger.start_new_run()
+            self.game.simulation_started = True
+
+    def export_parameters(self):
+        self.commit_active_field()
+        export_dir.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        file_path = export_dir / f"parameters-{timestamp}.txt"
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write("Survival Simulation - parameters\n")
+            f.write(f"Geexporteerd op: {datetime.now().isoformat(timespec='seconds')}\n")
+            f.write("\n")
+
+            for field in self.param_fields:
+                attr = field["attr"]
+                label = field["label"]
+                value = getattr(self.game, attr)
+                f.write(f"{label} ({attr}) = {value}\n")
+
+            f.write("\n")
+            f.write("Overig\n")
+            f.write(f"sim_speed = {self.game.sim_speed}\n")
+            f.write(f"max_food = {self.game.max_food}\n")
+            f.write(f"timestep_counter = {self.game.logger.timestep_counter}\n")
+
+        self.export_message = f"Parameters opgeslagen: {file_path.name}"
+        self.export_message_timer = 180
+        print(f"Parameters opgeslagen: {file_path}")
+        return file_path.name
+
     def handle_button(self, action):
         self.commit_active_field()
 
@@ -730,25 +725,54 @@ class UIController:
                 self.game.logger.start_new_run()
                 self.game.simulation_started = True
             self.game.paused = False
-        elif action == "stop":
+
+        elif action == "pause":
             self.game.paused = True
+
         elif action == "reset":
             self.game.paused = True
             self.game.simulation_started = False
             self.game.logger.close_csv()
             self.game.resetSimulation()
-        elif action == "spawn_prey":
-            self.game.factory.spawnPrey()
+            self.export_message = "Simulatie gereset"
+            self.export_message_timer = 120
+
+        elif action == "step":
+            self.ensure_run_started()
+            self.game.paused = True
+            self.game.engine.update()
+            self.game.sync_prey1_aliases()
+            self.export_message = "1 stap uitgevoerd"
+            self.export_message_timer = 90
+
+        elif action == "spawn_prey1":
+            self.game.factory.spawnPrey1()
+
         elif action == "spawn_prey2":
             self.game.factory.spawnPrey2()
+
         elif action == "spawn_food":
             self.game.factory.spawnFood()
+
         elif action == "spawn_pred":
             self.game.factory.spawnPredator()
+
         elif action == "export_csv":
             name = self.game.logger.export_snapshot()
             self.export_message = f"Volledige export: {name}"
             self.export_message_timer = 180
+
+        elif action == "export_params":
+            self.export_parameters()
+
+        elif action == "clear_snapshots":
+            self.game.snapshot_engine.clear_all()
+            self.time_slider_value = 0.0
+            self.available_snapshots = []
+            self.last_loaded_snapshot_id = None
+            self.export_message = "Alle snapshots verwijderd"
+            self.export_message_timer = 180
+
 
     def draw_panel(self):
         panel_rect = pygame.Rect(0, 0, self.game.panel_width, self.game.height)
@@ -761,21 +785,18 @@ class UIController:
             btn_color = btn.get("color", (70, 90, 120))
             pygame.draw.rect(self.game.surface, btn_color, btn["rect"], border_radius=8)
             pygame.draw.rect(self.game.surface, (190, 200, 220), btn["rect"], 2, border_radius=8)
-            txt = self.game.smallFont.render(btn["label"], True, (255, 255, 255))
+            txt = self.game.tinyFont.render(btn["label"], True, (255, 255, 255))
             txt_rect = txt.get_rect(center=btn["rect"].center)
             self.game.surface.blit(txt, txt_rect)
 
-                
-        # scheiding onder knoppen
         y_sep1 = self.buttons[-1]["rect"].bottom + 15
         pygame.draw.line(self.game.surface, (80, 80, 80), (20, y_sep1), (self.game.panel_width - 20, y_sep1), 2)
 
+        title = self.game.uiFont.render("Simulatie Parameters", True, (240, 240, 240))
+        self.game.surface.blit(title, (20, 180))
 
-        title = self.game.uiFont.render("Control Panel", True, (240, 240, 240))
-        self.game.surface.blit(title, (20, 230))
-
-        hint = self.game.tinyFont.render("Tune eerst de waarden, klik daarna op Start", True, (210, 210, 210))
-        self.game.surface.blit(hint, (20, 260))
+        hint = self.game.tinyFont.render("Tune waarden, Start/Pause/Step", True, (210, 210, 210))
+        self.game.surface.blit(hint, (20, 210))
 
         for i, field in enumerate(self.param_fields):
             rect = field["rect"]
@@ -796,26 +817,24 @@ class UIController:
             value = self.game.tinyFont.render(value_text, True, (50, 50, 50))
             self.game.surface.blit(value, (rect.x + 7, rect.y + 4))
 
-        # scheiding onder parameters        
-        y_sep2 = self.param_fields[-1]["rect"].bottom + 15
+        y_sep2 = self.param_fields[-1]["rect"].bottom + 12
         pygame.draw.line(self.game.surface, (80, 80, 80), (20, y_sep2), (self.game.panel_width - 20, y_sep2), 2)
 
         stats_y = self.game.graph_rect.y + 10
         stats_title = self.game.uiFont.render("Live Stats", True, (240, 240, 240))
         self.game.surface.blit(stats_title, (20, stats_y))
 
-        status = "Running" if not self.game.paused else "Stopped"
+        status = "Running" if not self.game.paused else "Paused"
         status_txt = self.game.smallFont.render(f"Status: {status}", True, (230, 230, 230))
         self.game.surface.blit(status_txt, (20, stats_y + 35))
 
         stats = [
             ("Timestep", self.game.logger.timestep_counter, (200, 200, 200)),
             ("Food", len(self.game.foodPopulation), (80, 220, 120)),
-            ("Prey", len(self.game.preyPopulation), (90, 180, 255)),
+            ("Prey1", len(self.game.prey1Population), (90, 180, 255)),
             ("Prey2", len(self.game.prey2Population), (255, 210, 90)),
             ("Predators", len(self.game.predatorPopulation), (255, 90, 90)),
         ]
-
 
         y = stats_y + 65
         for label, value, color in stats:
@@ -827,6 +846,45 @@ class UIController:
             msg = self.game.tinyFont.render(self.export_message, True, (255, 230, 120))
             self.game.surface.blit(msg, (20, self.game.height - 25))
             self.export_message_timer -= 1
+
+        self.available_snapshots = self.game.snapshot_engine.list_snapshots()
+
+        # === SIM SPEED SLIDER ===
+        label = self.game.smallFont.render("Sim Speed", True, (220, 220, 220))
+        self.game.surface.blit(label, (20, self.slider_rect.y - 30))
+
+        pygame.draw.rect(self.game.surface, (80, 80, 80), self.slider_rect, border_radius=6)
+        handle_x = self.slider_rect.x + int(self.slider_value * self.slider_rect.width)
+        handle_rect = pygame.Rect(handle_x - 6, self.slider_rect.y - 6, 12, 32)
+        pygame.draw.rect(self.game.surface, (220, 220, 220), handle_rect, border_radius=5)
+
+        speed_txt = self.game.smallFont.render(f"{self.game.sim_speed:.2f}x", True, (255, 255, 255))
+        self.game.surface.blit(speed_txt, (250, self.slider_rect.y - 30))
+
+        # === TIME SLIDER ===
+        label = self.game.smallFont.render("Timeline / Snapshots", True, (220, 220, 220))
+        self.game.surface.blit(label, (20, self.time_slider_rect.y - 30))
+
+        pygame.draw.rect(self.game.surface, (80, 80, 80), self.time_slider_rect, border_radius=6)
+        time_handle_x = self.time_slider_rect.x + int(self.time_slider_value * self.time_slider_rect.width)
+        time_handle_rect = pygame.Rect(time_handle_x - 6, self.time_slider_rect.y - 6, 12, 32)
+        pygame.draw.rect(self.game.surface, (255, 180, 90), time_handle_rect, border_radius=5)
+
+        if self.available_snapshots:
+            total = len(self.available_snapshots)
+            index = int(self.time_slider_value * (total - 1))
+            snapshot = self.available_snapshots[index]
+            snapshot_id = snapshot[0]
+            timestep = snapshot[1] if len(snapshot) > 1 else "?"
+            time_txt = self.game.smallFont.render(
+                f"id {snapshot_id} | t={timestep} | {index + 1}/{total}",
+                True,
+                (255, 255, 255)
+            )
+        else:
+            time_txt = self.game.smallFont.render("Nog geen snapshots", True, (180, 180, 180))
+
+        self.game.surface.blit(time_txt, (20, self.time_slider_rect.y + 28))
 
 
 # ==================================================
@@ -853,7 +911,7 @@ class GraphRenderer:
 
         values = (
             list(self.game.food_history)
-            + list(self.game.prey_history)
+            + list(self.game.prey1_history)
             + list(self.game.prey2_history)
             + list(self.game.pred_history)
         )
@@ -880,14 +938,14 @@ class GraphRenderer:
             self.game.surface.blit(label, (gx + 5, yy - 10))
 
         food_points = make_points(self.game.food_history)
-        prey_points = make_points(self.game.prey_history)
+        prey1_points = make_points(self.game.prey1_history)
         prey2_points = make_points(self.game.prey2_history)
         pred_points = make_points(self.game.pred_history)
 
         if len(food_points) >= 2:
             pygame.draw.lines(self.game.surface, (80, 220, 120), False, food_points, 2)
-        if len(prey_points) >= 2:
-            pygame.draw.lines(self.game.surface, (90, 180, 255), False, prey_points, 2)
+        if len(prey1_points) >= 2:
+            pygame.draw.lines(self.game.surface, (90, 180, 255), False, prey1_points, 2)
         if len(prey2_points) >= 2:
             pygame.draw.lines(self.game.surface, (255, 210, 90), False, prey2_points, 2)
         if len(pred_points) >= 2:
@@ -899,13 +957,13 @@ class GraphRenderer:
 # ==================================================
 class SurvivalSim:
     def __init__(self):
-        # layout
         self.width = 1600
         self.height = 1200
         self.panel_width = 390
         self.graph_height = 240
 
-        # pygame refs
+        self.sim_speed = 1.0
+
         self.surface = None
         self.clock = None
         self.debugFont = None
@@ -913,7 +971,6 @@ class SurvivalSim:
         self.smallFont = None
         self.tinyFont = None
 
-        # simulatie en grafiek
         self.sim_rect = pygame.Rect(
             self.panel_width,
             0,
@@ -927,7 +984,6 @@ class SurvivalSim:
             self.graph_height
         )
 
-        # UI
         self.buttons = []
         self.param_fields = []
         self.active_field = None
@@ -937,78 +993,81 @@ class SurvivalSim:
         self.export_message = ""
         self.export_message_timer = 0
 
-        # --------------------------------------------------
-        # STARTWAARDEN, VOORAF TE TUNEN IN LINKER PANEEL
-        # --------------------------------------------------
-# !!!!! parameters aangepast met behulp van ai om te proberen tot een evenwichtssituatie te komen,maar  dat werkt nog niet.
         # Food parameters
         self.start_food = 45
         self.food_speed = 0.0
         self.food_max_age = 1800
-        self.food_spawn_chance = 0.0046   # net onder 0.004
-        self.max_food = 120               # iets meer buffer
+        self.food_spawn_chance = 0.0046
+        self.max_food = 120
 
-        # Prey parameters (minder explosief, minder kwetsbaar)
-        self.start_prey = 14
-        self.prey_speed = 2.0
-        self.prey_max_age = 1600
-        self.prey_start_energy = 110
-        self.prey_reproduction_energy = 85
-        self.prey_energy_gain = 20        # lager dan 35
-        self.prey_energy_loss = 0.10      # iets hoger dan 0.12
-        self.prey_reproduction_cost = 55
+        # Prey1 parameters
+        self.start_prey1 = 14
+        self.prey1_speed = 2.0
+        self.prey1_max_age = 1600
+        self.prey1_start_energy = 110
+        self.prey1_reproduction_energy = 85
+        self.prey1_energy_gain = 20
+        self.prey1_energy_loss = 0.10
+        self.prey1_reproduction_cost = 55
 
-        # Prey2 parameters (extra beschermd tegen uitsterven)
+        # Compatibility aliases for older code or SnapshotEngine versions.
+        self.start_prey = self.start_prey1
+        self.prey_speed = self.prey1_speed
+        self.prey_max_age = self.prey1_max_age
+        self.prey_start_energy = self.prey1_start_energy
+        self.prey_reproduction_energy = self.prey1_reproduction_energy
+        self.prey_energy_gain = self.prey1_energy_gain
+        self.prey_energy_loss = self.prey1_energy_loss
+        self.prey_reproduction_cost = self.prey1_reproduction_cost
+
+        # Prey2 parameters
         self.start_prey2 = 10
         self.prey2_speed = 4.8
         self.prey2_max_age = 1100
         self.prey2_start_energy = 95
         self.prey2_reproduction_energy = 110
-        self.prey2_energy_gain = 18       # iets lager dan 25
-        self.prey2_energy_loss = 0.18     # lager dan 0.22
+        self.prey2_energy_gain = 18
+        self.prey2_energy_loss = 0.18
         self.prey2_reproduction_cost = 60
 
-        # Predator parameters (minder harde klap op prooien)
+        # Predator parameters
         self.start_predators = 3
         self.predator_speed = 2.6
         self.predator_max_age = 950
         self.predator_start_energy = 240
         self.predator_reproduction_energy = 700
-        self.predator_energy_gain = 55    # véél lager dan 140
-        self.predator_energy_loss = 1.8   # lager dan 2.2
+        self.predator_energy_gain = 55
+        self.predator_energy_loss = 1.8
         self.predator_reproduction_cost = 500
 
-
-
-
-        # grafiekhistorie: alleen voor de grafiek, mag maxlen hebben
         self.max_history = 340
         self.food_history = deque(maxlen=self.max_history)
-        self.prey_history = deque(maxlen=self.max_history)
+        self.prey1_history = deque(maxlen=self.max_history)
         self.prey2_history = deque(maxlen=self.max_history)
         self.pred_history = deque(maxlen=self.max_history)
 
-        # volledige dataset: zonder maxlen, dus compleet voor CSV-export
         self.full_data = []
 
-        # snapshotDB
-        # self.snapshot_db = SnapshotDB(base / "simulation.db")
-        # nieuw
+        # classes voor SnapshotEngine
+        self.food_class = Food
+        self.prey1_class = Prey1
+        self.prey_class = Prey1  # compatibility alias
+        self.prey2_class = Prey2
+        self.predator_class = Predator
+
         self.snapshot_engine = SnapshotEngine(base / "simulation.db")
 
-        # populaties
-        self.preyPopulation = []
+        self.prey1Population = []
+        self.preyPopulation = self.prey1Population  # compatibility alias
         self.prey2Population = []
         self.predatorPopulation = []
         self.foodPopulation = []
 
-        # csv
         self.csv_file = None
         self.csv_writer = None
         self.csv_path = None
         self.timestep_counter = 0
 
-        # managers & modules
         self.assets = AssetManager()
         self.logger = DataLogger(export_dir)
         self.factory = EntityFactory(self)
@@ -1016,31 +1075,39 @@ class SurvivalSim:
         self.ui = UIController(self)
         self.graph = GraphRenderer(self)
 
-        # images will be loaded after display is set (see main)
-        self.preyImage = None
+        self.prey1Image = None
+        self.preyImage = None  # compatibility alias
         self.prey2Image = None
         self.predImage = None
         self.foodImage = None
         self.backgroundImage = None
 
+    def sync_prey1_aliases(self):
+        # Keep older SnapshotEngine versions working if they use preyPopulation.
+        self.preyPopulation = self.prey1Population
+        self.preyImage = self.prey1Image
+
+        self.start_prey = self.start_prey1
+        self.prey_speed = self.prey1_speed
+        self.prey_max_age = self.prey1_max_age
+        self.prey_start_energy = self.prey1_start_energy
+        self.prey_reproduction_energy = self.prey1_reproduction_energy
+        self.prey_energy_gain = self.prey1_energy_gain
+        self.prey_energy_loss = self.prey1_energy_loss
+        self.prey_reproduction_cost = self.prey1_reproduction_cost
+
     def load_assets(self):
-        """
-        Load and scale assets. Must be called AFTER pygame.display.set_mode(...)
-        """
-        # Choose sizes appropriate for your sim_rect; tweak as needed
-        self.preyImage = self.assets.load_image("prey", prey1, size=(48, 48))
-        self.prey2Image = self.assets.load_image("prey2", prey2, size=(64, 64))
-        self.predImage = self.assets.load_image("pred", pred1, size=(72, 72))
-        self.foodImage = self.assets.load_image("food", food1, size=(32, 32))
-        # background: keep native size or scale to sim_rect if desired
+        self.prey1Image = self.assets.load_image("prey1", prey1, size=(32, 32))
+        self.preyImage = self.prey1Image  # compatibility alias
+        self.prey2Image = self.assets.load_image("prey2", prey2, size=(40, 40))
+        self.predImage = self.assets.load_image("pred", pred1, size=(48, 48))
+        self.foodImage = self.assets.load_image("food", food1, size=(24, 24))
+
         bg = pygame.image.load(background)
-        # If background is not same size as sim_rect, scale it to fit simulation area:
         bg = bg.convert()
         bg = pygame.transform.smoothscale(bg, (self.sim_rect.width, self.sim_rect.height))
         self.backgroundImage = bg
 
-        # Sounds
-        # Initialize mixer safely (ignore errors)
         try:
             pygame.mixer.init()
         except Exception:
@@ -1048,27 +1115,27 @@ class SurvivalSim:
         self.assets.load_sound("eat", eatSound1)
 
     def resetSimulation(self):
-        self.preyPopulation = [Prey(self.preyImage, self) for _ in range(int(self.start_prey))]
+        self.sync_prey1_aliases()
+        self.prey1Population = [Prey1(self.prey1Image, self) for _ in range(int(self.start_prey1))]
+        self.preyPopulation = self.prey1Population
         self.prey2Population = [Prey2(self.prey2Image, self) for _ in range(int(self.start_prey2))]
         self.predatorPopulation = [Predator(self.predImage, self) for _ in range(int(self.start_predators))]
         self.foodPopulation = [Food(self.foodImage, self) for _ in range(int(self.start_food))]
 
         self.food_history.clear()
-        self.prey_history.clear()
+        self.prey1_history.clear()
         self.prey2_history.clear()
         self.pred_history.clear()
 
         for _ in range(30):
             self.food_history.append(len(self.foodPopulation))
-            self.prey_history.append(len(self.preyPopulation))
+            self.prey1_history.append(len(self.prey1Population))
             self.prey2_history.append(len(self.prey2Population))
             self.pred_history.append(len(self.predatorPopulation))
 
         self.timestep_counter = 0
+        self.logger.timestep_counter = 0
 
-    # --------------------------------------------------
-    # CSV helpers (kept for backward compatibility)
-    # --------------------------------------------------
     def close_csv(self):
         self.logger.close_csv()
 
@@ -1078,28 +1145,22 @@ class SurvivalSim:
     def export_csv_now(self):
         return self.logger.export_snapshot()
 
-    # --------------------------------------------------
-    # SIMULATIE
-    # --------------------------------------------------
     def timestep(self):
         if self.paused:
             return
-
+        self.sync_prey1_aliases()
         self.engine.update()
+        self.sync_prey1_aliases()
 
-    # --------------------------------------------------
-    # DRAW
-    # --------------------------------------------------
     def draw(self):
-        # draw background in simulation rect
         self.surface.blit(self.backgroundImage, self.sim_rect)
 
         for food in self.foodPopulation:
             food.draw()
-        for prey in self.preyPopulation:
-            prey.draw()
-        for prey2 in self.prey2Population:
-            prey2.draw()
+        for prey1_obj in self.prey1Population:
+            prey1_obj.draw()
+        for prey2_obj in self.prey2Population:
+            prey2_obj.draw()
         for pred in self.predatorPopulation:
             pred.draw()
 
@@ -1114,44 +1175,62 @@ def main():
     pygame.init()
     sim = SurvivalSim()
 
-    # Create display BEFORE loading images
     sim.surface = pygame.display.set_mode((sim.width, sim.height))
     pygame.display.set_caption("Survival Simulation")
 
-    # Fonts
     sim.clock = pygame.time.Clock()
     sim.debugFont = pygame.font.SysFont("Consolas", 16)
     sim.uiFont = pygame.font.SysFont("Segoe UI", 22)
     sim.smallFont = pygame.font.SysFont("Segoe UI", 18)
     sim.tinyFont = pygame.font.SysFont("Segoe UI", 14)
 
-    # Load assets now that display exists
     sim.load_assets()
-
-    # Setup UI and initial simulation state
     sim.ui.setup_ui()
     sim.resetSimulation()
 
     running = True
     while running:
-        sim.clock.tick(60)
+        sim.clock.tick(int(60 * sim.sim_speed))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
                 sim.logger.close_csv()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                # check param fields
+
+                if sim.ui.slider_rect.collidepoint(pos):
+                    sim.ui.slider_active = True
+                    sim.ui.update_speed_slider_from_mouse(pos[0])
+
+                if sim.ui.time_slider_rect.collidepoint(pos):
+                    sim.ui.time_slider_active = True
+                    sim.ui.update_time_slider_from_mouse(pos[0])
+
                 for i, field in enumerate(sim.ui.param_fields):
                     if field["rect"].collidepoint(pos):
                         sim.ui.active_field = i
                         sim.ui.input_text = ""
                         break
-                # check buttons
+
                 for btn in sim.ui.buttons:
                     if btn["rect"].collidepoint(pos):
                         sim.ui.handle_button(btn["action"])
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                sim.ui.slider_active = False
+                sim.ui.time_slider_active = False
+
+            elif event.type == pygame.MOUSEMOTION:
+                mx = pygame.mouse.get_pos()[0]
+
+                if sim.ui.slider_active:
+                    sim.ui.update_speed_slider_from_mouse(mx)
+
+                if sim.ui.time_slider_active:
+                    sim.ui.update_time_slider_from_mouse(mx)
+
             elif event.type == pygame.KEYDOWN:
                 sim.ui.handle_text_input(event)
 
@@ -1159,27 +1238,9 @@ def main():
         sim.draw()
         pygame.display.flip()
 
+    sim.snapshot_engine.close()
     pygame.quit()
-    # sim.snapshot_db.close()  # netjes afsluiten van DB
-    self.snapshot_engine.close()
 
 
 if __name__ == "__main__":
     main()
-
-
-"""code voor snapshots benaderen"
-#opslaan
-snapshot_id = engine.save(game)
-#laden
-engine.load(game, snapshot_id)
-# voorbeeld 
-self.snapshot_engine.load(self, snapshot_id=100)
-#laatste
-last = self.snapshot_engine.get_latest_snapshot_id()
-if last:
-    self.snapshot_engine.load(self, last)
-
-#overzicht
-engine.list_snapshots()
-"""
