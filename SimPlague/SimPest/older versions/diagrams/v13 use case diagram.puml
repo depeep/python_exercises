@@ -1,0 +1,39 @@
+@startuml
+
+actor User
+
+rectangle "Survival Simulation System" {
+
+    User --> (Start simulatie)
+    User --> (Stop simulatie)
+    User --> (Reset simulatie)
+
+    User --> (Parameters aanpassen)
+    User --> (Waarden invoeren)
+
+    User --> (Spawn Prey)
+    User --> (Spawn Prey2)
+    User --> (Spawn Predator)
+    User --> (Spawn Food)
+
+    User --> (Bekijk populatie grafiek)
+    User --> (Bekijk live statistieken)
+
+    User --> (Export CSV)
+
+    (Start simulatie) --> (Initialiseer populaties)
+    (Start simulatie) --> (Start logging)
+
+    (Simulatie draait) <-- (Start simulatie)
+
+    (Simulatie draait) --> (Beweeg entities)
+    (Simulatie draait) --> (Detecteer botsingen)
+    (Simulatie draait) --> (Eet interacties)
+    (Simulatie draait) --> (Reproductie)
+    (Simulatie draait) --> (Log data)
+
+    (Export CSV) --> (Exporteer dataset)
+
+}
+
+@enduml

@@ -1,0 +1,132 @@
+@startuml
+
+class SurvivalSim {
+    +width
+    +height
+    +panel_width
+    +graph_height
+
+    +preyPopulation
+    +prey2Population
+    +predatorPopulation
+    +foodPopulation
+
+    +assets : AssetManager
+    +logger : DataLogger
+    +factory : EntityFactory
+    +engine : SimulationEngine
+    +ui : UIController
+    +graph : GraphRenderer
+
+    +resetSimulation()
+    +timestep()
+    +draw()
+    +load_assets()
+}
+
+class AssetManager {
+    +images
+    +sounds
+    +load_image()
+    +get_image()
+    +load_sound()
+    +get_sound()
+}
+
+class DataLogger {
+    +csv_file
+    +csv_writer
+    +full_data
+    +timestep_counter
+
+    +start_new_run()
+    +log_step()
+    +export_snapshot()
+    +close_csv()
+}
+
+class EntityFactory {
+    +spawnPrey()
+    +spawnPrey2()
+    +spawnPredator()
+    +spawnFood()
+}
+
+class SimulationEngine {
+    +getClosestFood()
+    +getClosestAnyPrey()
+    +reproduceFood()
+    +update()
+}
+
+class UIController {
+    +buttons
+    +param_fields
+    +handle_button()
+    +handle_text_input()
+    +draw_panel()
+}
+
+class GraphRenderer {
+    +draw()
+}
+
+class Sprite {
+    +image
+    +position
+    +update()
+    +draw()
+    +collidesWith()
+}
+
+class Food {
+    +age
+    +reset()
+    +update()
+}
+
+class Prey {
+    +energy
+    +age
+    +eat()
+    +update()
+}
+
+class Prey2 {
+    +energy
+    +age
+    +eat()
+    +update()
+}
+
+class Predator {
+    +energy
+    +age
+    +update()
+}
+
+' Inheritance
+Sprite <|-- Food
+Sprite <|-- Prey
+Sprite <|-- Prey2
+Sprite <|-- Predator
+
+' Composition / usage
+SurvivalSim --> AssetManager
+SurvivalSim --> DataLogger
+SurvivalSim --> EntityFactory
+SurvivalSim --> SimulationEngine
+SurvivalSim --> UIController
+SurvivalSim --> GraphRenderer
+
+EntityFactory --> SurvivalSim
+SimulationEngine --> SurvivalSim
+UIController --> SurvivalSim
+GraphRenderer --> SurvivalSim
+
+Prey --> SurvivalSim
+Prey2 --> SurvivalSim
+Predator --> SurvivalSim
+Food --> SurvivalSim
+
+@enduml

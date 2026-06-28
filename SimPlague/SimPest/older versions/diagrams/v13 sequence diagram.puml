@@ -1,0 +1,59 @@
+@startuml
+
+actor User
+participant "Main Loop" as Main
+participant "SurvivalSim" as Sim
+participant "SimulationEngine" as Engine
+participant "EntityFactory" as Factory
+participant "Prey/Prey2/Predator/Food" as Entities
+participant "DataLogger" as Logger
+participant "UIController" as UI
+participant "GraphRenderer" as Graph
+
+== Input fase ==
+User -> Main : Mouse/Keyboard input
+Main -> UI : handle_text_input()
+Main -> UI : handle_button()
+
+alt Button: Start
+    UI -> Sim : resetSimulation()
+    UI -> Logger : start_new_run()
+end
+
+== Update fase ==
+Main -> Sim : timestep()
+Sim -> Engine : update()
+
+Engine -> Entities : update() (per entity)
+
+loop Voor elke Food
+    Engine -> Entities : voedsel.update()
+end
+
+loop Voor elke Prey
+    Engine -> Entities : prey.update()
+end
+
+loop Voor elke Predator
+    Engine -> Entities : predator.update()
+end
+
+== Interacties ==
+loop collision checks
+    Engine -> Entities : collidesWith()
+    Engine -> Entities : eat()
+end
+
+Engine -> Engine : reproduceFood()
+
+== Logging ==
+Engine -> Logger : log_step()
+
+== Render fase ==
+Main -> Sim : draw()
+
+Sim -> Entities : draw()
+Sim -> UI : draw_panel()
+Sim -> Graph : draw()
+
+@enduml
