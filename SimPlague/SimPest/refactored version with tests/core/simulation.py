@@ -62,7 +62,7 @@ class SurvivalSim:
         self.smallFont = None
         self.tinyFont = None
 
-        # ==================================================
+             # ==================================================
         # FOOD PARAMETERS
         # ==================================================
         self.start_food = 45
@@ -116,7 +116,7 @@ class SurvivalSim:
         self.predator_energy_gain = 55
         self.predator_energy_loss = 1.8
         self.predator_reproduction_cost = 500
-
+        
         # ==================================================
         # POPULATIONS
         # ==================================================

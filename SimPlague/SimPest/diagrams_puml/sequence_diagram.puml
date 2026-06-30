@@ -1,0 +1,178 @@
+@startuml sequence_diagram
+title Survival Simulation – Sequence Diagram\nOne full timestep: Start → Engine Update → Render
+
+skinparam backgroundColor #0f1117
+skinparam DefaultFontColor #e8eaf0
+skinparam SequenceActorBorderColor #8eb4ff
+skinparam SequenceActorFontColor #8eb4ff
+skinparam SequenceParticipantBorderColor #5577cc
+skinparam SequenceParticipantBackgroundColor #141928
+skinparam SequenceParticipantFontColor #cde8ff
+skinparam SequenceArrowColor #8eb4ff
+skinparam SequenceLifeLineBorderColor #2a3450
+skinparam NoteBackgroundColor #1a1a2a
+skinparam NoteBorderColor #3a4060
+skinparam SequenceGroupBorderColor #2a5a30
+skinparam SequenceGroupBodyBackgroundColor #0a1a08
+
+actor       User            as U
+participant SurvivalSim     as Sim
+participant UIController    as UI
+participant SimulationEngine as Eng
+participant "Prey1/Prey2\nPredator/Food" as Ent
+participant EntityFactory   as Fac
+participant DataLogger      as DL
+participant SnapshotEngine  as SE
+
+' ── Startup ─────────────────────────────────────────────────
+U  -> Sim : run()
+activate Sim
+
+Sim -> Sim : pygame.init() + display setup
+Sim -> Sim : load_assets()
+Sim -> UI  : setup_ui()
+Sim -> Sim : resetSimulation()
+
+note right of Sim
+  Populations created with
+  start_prey1 / start_prey2 /
+  start_predators / start_food
+end note
+
+' ── Main loop ───────────────────────────────────────────────
+loop while running
+
+    U -> Sim : click «Start»
+    Sim -> UI : handle_button("start")
+    activate UI
+    UI -> Sim : resetSimulation()
+    UI -> DL  : start_new_run()
+    UI -> Sim : paused = False
+    deactivate UI
+
+    ' ── Timestep ────────────────────────────────────────────
+    Sim -> Sim : timestep()
+
+    alt paused == False
+        Sim -> Eng : update()
+        activate Eng
+
+        ' Update all entities
+        loop for each Prey1, Prey2, Predator, Food
+            Eng -> Ent : update()
+            activate Ent
+
+            Ent -> Eng : getClosestFood(pos)\nor getClosestAnyPreyTarget(pos)
+            note right : returns nearest target\nusing math.dist
+
+            Ent -> Ent : move toward target\n(speed × normalised direction)
+            Ent -> Ent : placeInScreen() — clamp to sim_rect
+            deactivate Ent
+        end
+
+        ' Eating logic
+        loop for each Food in foodPopulation
+            Eng -> Ent : prey.collidesWith(food)?
+
+            alt collision detected
+                Eng -> Ent : prey.eat(food)
+                activate Ent
+                Ent -> Ent : energy += energy_gain
+                Ent -> Ent : eatSound.play()
+
+                alt energy > reproduction_energy
+                    Ent -> Fac : spawnPrey1() or spawnPrey2()
+                    activate Fac
+                    Fac -> Sim : prey1Population.append(new Prey1)
+                    deactivate Fac
+                end
+
+                Ent -> Ent : food.reset() — reposition food
+                deactivate Ent
+            end
+        end
+
+        ' Predator kills prey
+        loop for each Predator
+            Eng -> Ent : predator.collidesWith(prey)?
+
+            alt collision detected
+                Eng -> Sim : prey1Population.remove(prey)\nor prey2Population.remove(prey)
+                Eng -> Ent : predator.energy += predator_energy_gain
+
+                alt predator.energy > reproduction_energy
+                    Ent -> Fac : spawnPredator()
+                    activate Fac
+                    Fac -> Sim : predatorPopulation.append(new Predator)
+                    deactivate Fac
+                end
+            end
+        end
+
+        ' Food reproduction
+        Eng -> Eng : reproduceFood()
+        note right : random.random() < food_spawn_chance\nfor each existing Food,\ncapped at max_food
+
+        ' Update history deques
+        Eng -> Sim : food_history.append(len(foodPopulation))
+        Eng -> Sim : prey1/prey2/pred_history.append(...)
+
+        ' Log step
+        Eng -> DL  : log_step(food, prey1, prey2, pred)
+        activate DL
+        DL  -> DL  : csv_writer.writerow(row)
+        DL  -> DL  : timestep_counter += 1
+        deactivate DL
+
+        ' Snapshot every 10 steps
+        alt timestep_counter % 10 == 0
+            Eng -> SE : save(game)
+            activate SE
+            SE  -> SE  : INSERT INTO snapshots
+            SE  -> SE  : INSERT INTO entities (all populations)
+            SE  --> Eng : snapshot_id
+            deactivate SE
+        end
+
+        deactivate Eng
+
+    else paused == True
+        note over Sim : timestep() returns immediately
+    end
+
+    ' ── Render ──────────────────────────────────────────────
+    Sim -> Sim : draw()
+
+    Sim -> Sim : surface.blit(backgroundImage, sim_rect)
+
+    loop for each entity (Food, Prey1, Prey2, Predator)
+        Sim -> Ent : draw()
+        Ent -> Sim : surface.blit(image, position)
+    end
+
+    Sim -> UI  : draw_panel()
+    note right of UI
+      Draws buttons, parameter fields,
+      speed slider, time/snapshot slider,
+      and live stats (timestep, counts)
+    end note
+
+    Sim -> Sim : graph.draw()
+    note right of Sim
+      Renders population-over-time
+      line chart for Food / Prey1 /
+      Prey2 / Predators
+    end note
+
+    Sim -> Sim : pygame.display.flip()
+
+end
+
+' ── Shutdown ────────────────────────────────────────────────
+U  -> Sim : close window (QUIT event)
+Sim -> DL  : close_csv()
+Sim -> SE  : close()
+Sim -> Sim : pygame.quit()
+deactivate Sim
+
+@enduml

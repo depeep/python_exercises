@@ -36,19 +36,19 @@ class UIController:
             # Rij 1: start, pause, reset, step
             {"label": "Start", "rect": pygame.Rect(x1, y1, btn_w, btn_h), "action": "start", "color": (60, 140, 80)},
             {"label": "Pause", "rect": pygame.Rect(x2, y1, btn_w, btn_h), "action": "pause", "color": (160, 70, 70)},
-            {"label": "Reset", "rect": pygame.Rect(x3, y1, btn_w, btn_h), "action": "reset", "color": (70, 90, 120)},
-            {"label": "Step", "rect": pygame.Rect(x4, y1, btn_w, btn_h), "action": "step", "color": (120, 120, 200)},
+            {"label": "Reset", "rect": pygame.Rect(x3, y1, btn_w, btn_h), "action": "reset", "color": (40,40,140)},
+            {"label": "Step", "rect": pygame.Rect(x4, y1, btn_w, btn_h), "action": "step", "color": (128,128,30)},
 
             # Rij 2: spawn prey1, spawn prey2, spawn food, spawn predator
-            {"label": "Spawn P1", "rect": pygame.Rect(x1, y2, btn_w, btn_h), "action": "spawn_prey1", "color": (70, 90, 120)},
-            {"label": "Spawn P2", "rect": pygame.Rect(x2, y2, btn_w, btn_h), "action": "spawn_prey2", "color": (70, 90, 120)},
-            {"label": "Food", "rect": pygame.Rect(x3, y2, btn_w, btn_h), "action": "spawn_food", "color": (70, 90, 120)},
-            {"label": "Predator", "rect": pygame.Rect(x4, y2, btn_w, btn_h), "action": "spawn_pred", "color": (70, 90, 120)},
+            {"label": "Spawn Rabb", "rect": pygame.Rect(x1, y2, btn_w, btn_h), "action": "spawn_prey1", "color": (70, 90, 120)},
+            {"label": "Spawn Goat", "rect": pygame.Rect(x2, y2, btn_w, btn_h), "action": "spawn_prey2", "color": (70, 90, 120)},
+            {"label": "Spawn Food", "rect": pygame.Rect(x3, y2, btn_w, btn_h), "action": "spawn_food", "color": (70, 90, 120)},
+            {"label": "Spawn Wolf", "rect": pygame.Rect(x4, y2, btn_w, btn_h), "action": "spawn_pred", "color": (70, 90, 120)},
 
             # Rij 3: export csv, export parameters, clear snapshot, lege ruimte(gelijke breedte als andere knoppen)
-            {"label": "CSV", "rect": pygame.Rect(x1, y3, btn_w, btn_h), "action": "export_csv", "color": (120,120,40)},
-            {"label": "Params", "rect": pygame.Rect(x2, y3, btn_w, btn_h), "action": "export_params", "color": (100,70,140)},
-            {"label": "Clear", "rect": pygame.Rect(x3, y3, btn_w, btn_h), "action": "clear_snapshots", "color": (140,60,60)},
+            {"label": "Save CSV", "rect": pygame.Rect(x1, y3, btn_w, btn_h), "action": "export_csv", "color": (100,70,140)},
+            {"label": "Save Params", "rect": pygame.Rect(x2, y3, btn_w, btn_h), "action": "export_params", "color": (100,70,140)},
+            {"label": "Clear Snap", "rect": pygame.Rect(x3, y3, btn_w, btn_h), "action": "clear_snapshots", "color": (100,70,140)},
         ]
         self.update_param_fields()
 
@@ -60,22 +60,22 @@ class UIController:
         label_x = 20
         box_x = 245
         fields = [
-            ("Food aantal", "start_food", "int"),
-            ("Food snelheid", "food_speed", "float"),
-            ("Food max leeftijd", "food_max_age", "int"),
-            ("Food reproduce kans", "food_spawn_chance", "float"),
-            ("Prey1 aantal", "start_prey1", "int"),
-            ("Prey1 snelheid", "prey1_speed", "float"),
-            ("Prey1 max leeftijd", "prey1_max_age", "int"),
-            ("Prey1 reproduce energie", "prey1_reproduction_energy", "float"),
-            ("Prey2 aantal", "start_prey2", "int"),
-            ("Prey2 snelheid", "prey2_speed", "float"),
-            ("Prey2 max leeftijd", "prey2_max_age", "int"),
-            ("Prey2 reproduce energie", "prey2_reproduction_energy", "float"),
-            ("Predator aantal", "start_predators", "int"),
-            ("Predator snelheid", "predator_speed", "float"),
-            ("Predator max leeftijd", "predator_max_age", "int"),
-            ("Predator reproduce energie", "predator_reproduction_energy", "float"),
+            ("Food number", "start_food", "int"),
+            ("Food speed", "food_speed", "float"),
+            ("Food max age", "food_max_age", "int"),
+            ("Food repro chance", "food_spawn_chance", "float"),
+            ("Rabbit number", "start_prey1", "int"),
+            ("Rabbit speed", "prey1_speed", "float"),
+            ("Rabbit max age", "prey1_max_age", "int"),
+            ("Rabbit repro threshold ", "prey1_reproduction_energy", "float"),
+            ("Goat number", "start_prey2", "int"),
+            ("Goat speed", "prey2_speed", "float"),
+            ("Goat max age", "prey2_max_age", "int"),
+            ("Goat repro threshold", "prey2_reproduction_energy", "float"),
+            ("Wolf number", "start_predators", "int"),
+            ("Wolf speed", "predator_speed", "float"),
+            ("Wolf max age", "predator_max_age", "int"),
+            ("Wolf repro threshold", "predator_reproduction_energy", "float"),
         ]
 
         self.param_fields = []
@@ -336,9 +336,9 @@ class UIController:
         stats = [
             ("Timestep", self.game.logger.timestep_counter, (200, 200, 200)),
             ("Food", len(self.game.foodPopulation), (80, 220, 120)),
-            ("Prey1", len(self.game.prey1Population), (90, 180, 255)),
-            ("Prey2", len(self.game.prey2Population), (255, 210, 90)),
-            ("Predators", len(self.game.predatorPopulation), (255, 90, 90)),
+            ("Rabbits", len(self.game.prey1Population), (90, 180, 255)),
+            ("Goats", len(self.game.prey2Population), (255, 210, 90)),
+            ("Wolves", len(self.game.predatorPopulation), (255, 90, 90)),
         ]
 
         y = stats_y + 65

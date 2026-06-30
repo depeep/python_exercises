@@ -1,0 +1,24 @@
+Survival Simulation - parameters
+Geexporteerd op: 2026-06-30T19:37:37
+
+Food aantal (start_food) = 45
+Food snelheid (food_speed) = 0.0
+Food max leeftijd (food_max_age) = 1800
+Food reproduce kans (food_spawn_chance) = 0.0046
+Prey1 aantal (start_prey1) = 14
+Prey1 snelheid (prey1_speed) = 2.0
+Prey1 max leeftijd (prey1_max_age) = 1600
+Prey1 reproduce energie (prey1_reproduction_energy) = 85
+Prey2 aantal (start_prey2) = 10
+Prey2 snelheid (prey2_speed) = 4.8
+Prey2 max leeftijd (prey2_max_age) = 1100
+Prey2 reproduce energie (prey2_reproduction_energy) = 110
+Predator aantal (start_predators) = 3
+Predator snelheid (predator_speed) = 2.6
+Predator max leeftijd (predator_max_age) = 950
+Predator reproduce energie (predator_reproduction_energy) = 700
+
+Overig
+sim_speed = 1.0
+max_food = 120
+timestep_counter = 0

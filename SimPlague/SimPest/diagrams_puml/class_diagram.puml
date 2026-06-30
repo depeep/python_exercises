@@ -1,0 +1,249 @@
+@startuml class_diagram
+title Survival Simulation – Class Diagram
+
+skinparam backgroundColor #0f1117
+skinparam DefaultFontColor #e8eaf0
+skinparam ClassBorderColor #5577cc
+skinparam ClassBackgroundColor #141928
+skinparam ClassHeaderBackgroundColor #1a2240
+skinparam ClassFontColor #8eb4ff
+skinparam ArrowColor #5577cc
+skinparam NoteBackgroundColor #1a1a2a
+skinparam NoteBorderColor #3a4060
+skinparam PackageBorderColor #2a3450
+skinparam PackageBackgroundColor #0d1020
+
+' ──────────────────────────────────────────────
+' ENTITIES
+' ──────────────────────────────────────────────
+
+package "entities" {
+
+    abstract class Sprite {
+        + image
+        + game : SurvivalSim
+        + position : list[float, float]
+        --
+        + draw()
+        + reset()
+        + placeInScreen()
+        + collidesWith(other : Sprite) : bool
+    }
+
+    class Food {
+        + age : int
+        --
+        + reset()
+        + update()
+    }
+
+    class Prey1 {
+        + energy : float
+        + age : int
+        + eatSound
+        --
+        + update()
+        + eat(food : Food)
+        + reset()
+    }
+
+    class Prey2 {
+        + energy : float
+        + age : int
+        + eatSound
+        --
+        + update()
+        + eat(food : Food)
+        + reset()
+    }
+
+    class Predator {
+        + energy : float
+        + age : int
+        --
+        + update()
+        + reset()
+    }
+
+    Sprite <|-- Food
+    Sprite <|-- Prey1
+    Sprite <|-- Prey2
+    Sprite <|-- Predator
+}
+
+' ──────────────────────────────────────────────
+' CORE
+' ──────────────────────────────────────────────
+
+package "core" {
+
+    class SurvivalSim {
+        ' Layout
+        + width : int
+        + height : int
+        + panel_width : int
+        + sim_rect : pygame.Rect
+        + graph_rect : pygame.Rect
+        ' Runtime state
+        + sim_speed : float
+        + paused : bool
+        + simulation_started : bool
+        ' Populations
+        + prey1Population : list[Prey1]
+        + prey2Population : list[Prey2]
+        + predatorPopulation : list[Predator]
+        + foodPopulation : list[Food]
+        ' History (deques)
+        + food_history : deque
+        + prey1_history : deque
+        + prey2_history : deque
+        + pred_history : deque
+        ' Subsystem references
+        + engine : SimulationEngine
+        + factory : EntityFactory
+        + logger : DataLogger
+        + snapshot_engine : SnapshotEngine
+        + assets : AssetManager
+        + ui : UIController
+        + graph : GraphRenderer
+        --
+        + run()
+        + timestep()
+        + resetSimulation()
+        + load_assets()
+        + draw()
+        + sync_prey1_aliases()
+    }
+
+    class SimulationEngine {
+        + game : SurvivalSim
+        --
+        + update()
+        + getClosestFood(pos) : Food
+        + getClosestAnyPreyTarget(pos) : Sprite
+        + reproduceFood()
+    }
+
+    class EntityFactory {
+        + game : SurvivalSim
+        --
+        + spawnPrey1()
+        + spawnPrey2()
+        + spawnPredator()
+        + spawnFood()
+        + spawnPrey()
+    }
+
+    SurvivalSim *-- SimulationEngine : engine
+    SurvivalSim *-- EntityFactory    : factory
+}
+
+' ──────────────────────────────────────────────
+' PERSISTENCE
+' ──────────────────────────────────────────────
+
+package "persistence" {
+
+    class DataLogger {
+        + export_dir : Path
+        + timestep_counter : int
+        + csv_writer
+        + full_data : list
+        --
+        + start_new_run()
+        + log_step(food, prey1, prey2, pred) : list
+        + export_snapshot() : str
+        + close_csv()
+    }
+
+    class SnapshotEngine {
+        + db_path : Path
+        + conn : sqlite3.Connection
+        --
+        + save(game : SurvivalSim) : int
+        + load(game : SurvivalSim, snapshot_id : int)
+        + list_snapshots() : list
+        + get_latest_snapshot_id() : int
+        + clear_all()
+        + close()
+    }
+
+    SurvivalSim *-- DataLogger     : logger
+    SurvivalSim *-- SnapshotEngine : snapshot_engine
+}
+
+' ──────────────────────────────────────────────
+' UI
+' ──────────────────────────────────────────────
+
+package "ui" {
+
+    class UIController {
+        + game : SurvivalSim
+        + buttons : list
+        + param_fields : list
+        + slider_rect : pygame.Rect
+        + time_slider_rect : pygame.Rect
+        + active_field : int
+        + input_text : str
+        --
+        + setup_ui()
+        + draw_panel()
+        + handle_button(action : str)
+        + handle_text_input(event)
+        + commit_active_field()
+        + update_speed_slider_from_mouse(mx)
+        + update_time_slider_from_mouse(mx)
+        + export_parameters() : str
+    }
+
+    class GraphRenderer {
+        + game : SurvivalSim
+        --
+        + draw()
+    }
+
+    SurvivalSim *-- UIController  : ui
+    SurvivalSim *-- GraphRenderer : graph
+}
+
+' ──────────────────────────────────────────────
+' INFRA
+' ──────────────────────────────────────────────
+
+package "infra" {
+
+    class AssetManager {
+        + images : dict
+        + sounds : dict
+        --
+        + load_image(key, path, size) : Surface
+        + get_image(key) : Surface
+        + load_sound(key, path) : Sound
+        + get_sound(key) : Sound
+    }
+
+    class DummySound {
+        --
+        + play()
+    }
+
+    class "helpers (module)" as Helpers << (M, #6272a4) >> {
+        + distance(a, b) : float
+        + clamp(value, min, max) : float
+    }
+
+    AssetManager ..> DummySound : fallback
+    SurvivalSim *-- AssetManager : assets
+}
+
+' Cross-package usage
+SimulationEngine ..> Helpers : uses
+Sprite           ..> Helpers : uses
+EntityFactory    ..> Prey1    : creates
+EntityFactory    ..> Prey2    : creates
+EntityFactory    ..> Predator : creates
+EntityFactory    ..> Food     : creates
+SimulationEngine ..> Food     : reproduces
+
+@enduml

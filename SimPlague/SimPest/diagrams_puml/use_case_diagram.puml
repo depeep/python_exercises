@@ -1,0 +1,84 @@
+@startuml use_case_diagram
+title Survival Simulation – Use Case Diagram
+
+skinparam backgroundColor #0f1117
+skinparam DefaultFontColor #e8eaf0
+skinparam ActorBorderColor #8eb4ff
+skinparam ActorFontColor #8eb4ff
+skinparam UsecaseBorderColor #5577cc
+skinparam UsecaseBackgroundColor #1a2240
+skinparam UsecaseFontColor #cde8ff
+skinparam ArrowColor #5577cc
+skinparam NoteBackgroundColor #1a1a2a
+skinparam NoteBorderColor #3a4060
+
+left to right direction
+
+actor User as U
+actor "File System" as FS
+actor "SQLite DB" as DB
+
+rectangle "Survival Simulation System" {
+
+    package "Simulation Control" {
+        usecase "Start Simulation"       as UC_Start
+        usecase "Pause / Resume"         as UC_Pause
+        usecase "Step Simulation"        as UC_Step
+        usecase "Reset Simulation"       as UC_Reset
+        usecase "Adjust Speed"           as UC_Speed
+        usecase "Edit Parameters"        as UC_Params
+    }
+
+    package "Entity Management" {
+        usecase "Spawn Entity"           as UC_Spawn
+        usecase "View Live Stats"        as UC_Stats
+        usecase "View Population Graph"  as UC_Graph
+        usecase "Browse Snapshots"       as UC_Browse
+        usecase "Clear Snapshots"        as UC_Clear
+    }
+
+    package "Data Export" {
+        usecase "Export CSV Data"        as UC_CSV
+        usecase "Export Parameters"      as UC_ExportP
+        usecase "Auto-Save Snapshot"     as UC_AutoSave
+        usecase "Load Snapshot"          as UC_Load
+    }
+
+    usecase "Reproduce Entity"           as UC_Reproduce
+}
+
+' User interactions
+U --> UC_Start
+U --> UC_Pause
+U --> UC_Step
+U --> UC_Reset
+U --> UC_Speed
+U --> UC_Params
+U --> UC_Spawn
+U --> UC_Stats
+U --> UC_Graph
+U --> UC_Browse
+U --> UC_Clear
+U --> UC_CSV
+U --> UC_ExportP
+
+' File system connections
+UC_CSV      --> FS
+UC_ExportP  --> FS
+
+' Database connections
+UC_AutoSave --> DB
+UC_Load     --> DB
+UC_Browse   --> DB
+UC_Clear    --> DB
+
+' Include relationships
+UC_Spawn  ..> UC_Reproduce : <<include>>
+UC_Start  ..> UC_Reset     : <<include>>
+
+note bottom of UC_AutoSave
+  Triggered automatically every
+  10 timesteps by SimulationEngine
+end note
+
+@enduml
